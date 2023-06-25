@@ -1,0 +1,1 @@
+# This file prevents umba-enum-gen lookup for configs up to file hierarchy

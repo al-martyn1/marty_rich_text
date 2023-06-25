@@ -1,0 +1,4 @@
+unknown,invalid,undefined=-1
+typeString
+typeInt
+typeUnsigned
