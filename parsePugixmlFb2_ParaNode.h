@@ -81,23 +81,23 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
     // <a>
     // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_a
-    // Для сносок сам текст каждой сноски должен находиться отдельной <section>, расположенной в <body> с атрибутом name="notes".
+    // Р”Р»СЏ СЃРЅРѕСЃРѕРє СЃР°Рј С‚РµРєСЃС‚ РєР°Р¶РґРѕР№ СЃРЅРѕСЃРєРё РґРѕР»Р¶РµРЅ РЅР°С…РѕРґРёС‚СЊСЃСЏ РѕС‚РґРµР»СЊРЅРѕР№ <section>, СЂР°СЃРїРѕР»РѕР¶РµРЅРЅРѕР№ РІ <body> СЃ Р°С‚СЂРёР±СѓС‚РѕРј name="notes".
     // <a type="note">
     // <a l:href="#note1" type="note">[1]</a>
-    // <a l:href="#app1">приложении 1</a>.</p>
+    // <a l:href="#app1">РїСЂРёР»РѕР¶РµРЅРёРё 1</a>.</p>
 
     // <image>
     // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_image
     // <image l:href="#picture.jpg"/>
 
-    // Вроде аналогично обычному HTML
+    // Р’СЂРѕРґРµ Р°РЅР°Р»РѕРіРёС‡РЅРѕ РѕР±С‹С‡РЅРѕРјСѓ HTML
     // <strong>, <emphasis>, <style>, <a>, <strikethrough>, <sub>, <sup>, <code>, <image>
 
 
-    // Упрощенный HTML типа https://www.viksoe.dk/code/minihtml.htm
+    // РЈРїСЂРѕС‰РµРЅРЅС‹Р№ HTML С‚РёРїР° https://www.viksoe.dk/code/minihtml.htm
     // <FONT>...</FONT> - The font tag with several attributes, such as FACE="xyz", SIZE=n and COLOR="#rrggbb".
 
-    // Упрощенный HTML, моё
+    // РЈРїСЂРѕС‰РµРЅРЅС‹Р№ HTML, РјРѕС‘
     // <color value="">
 
 
@@ -202,8 +202,12 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
     {
         #if defined(DEBUG) || defined(_DEBUG)
 
-            std::vector<TextFragment> fragments = curPara.splitToFragments();
-            return fragments.empty(), true;
+            // Р’СЂРѕРґРµ РѕС‚Р»Р°РґРёР»РёСЃСЊ, РїРѕРєР° РЅРµ РЅСѓР¶РЅРѕ Р·С‹СЂРёС‚СЊ РЅР° С„СЂР°РіРјРµРЅС‚С‹
+
+            // std::vector<TextFragment> fragments = curPara.splitToFragments();
+            // return fragments.empty(), true;
+
+            return true;
 
         #else
 
@@ -233,10 +237,10 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
         curTagAttributes.values.clear();
 
         // curTagAttributes
-        // Тут надо извлечь инфу из тэга style, image, a, font, color etc
-        // И всунуть в curTagAttributes.values
+        // РўСѓС‚ РЅР°РґРѕ РёР·РІР»РµС‡СЊ РёРЅС„Сѓ РёР· С‚СЌРіР° style, image, a, font, color etc
+        // Р РІСЃСѓРЅСѓС‚СЊ РІ curTagAttributes.values
 
-        // Но пока ничего не делаем
+        // РќРѕ РїРѕРєР° РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°РµРј
         if ( tagFlag==BasicStyleFlags::link
           || tagFlag==BasicStyleFlags::image
           || tagFlag==BasicStyleFlags::style
@@ -248,15 +252,15 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
         BasicStyleFlags prevFlags = mergeStackFlags();
 
-        styleFlagsStack .push_back(tagFlag)                ; // запендюрили флаги стилей на стек
-        styleValuesStack.push_back(curTagAttributes.values); // запендюрили доп атрибуты стилей на стек
+        styleFlagsStack .push_back(tagFlag)                ; // Р·Р°РїРµРЅРґСЋСЂРёР»Рё С„Р»Р°РіРё СЃС‚РёР»РµР№ РЅР° СЃС‚РµРє
+        styleValuesStack.push_back(curTagAttributes.values); // Р·Р°РїРµРЅРґСЋСЂРёР»Рё РґРѕРї Р°С‚СЂРёР±СѓС‚С‹ СЃС‚РёР»РµР№ РЅР° СЃС‚РµРє
 
         curTagAttributes.style = mergeStackFlags(); // cur flags
         curTagAttributes.diff  = tagFlag;
         if (prevFlags==curTagAttributes.style)
         {
-            //TODO: !!! Тут может быть нюанс, что идут два одинаковых тэга с доп параметрами, их надо проверить, пока не сделано (теперь вроде сделано)
-            // Или вложенные тэги - хотя, вложенность, по идее, схлопывается
+            //TODO: !!! РўСѓС‚ РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅСЋР°РЅСЃ, С‡С‚Рѕ РёРґСѓС‚ РґРІР° РѕРґРёРЅР°РєРѕРІС‹С… С‚СЌРіР° СЃ РґРѕРї РїР°СЂР°РјРµС‚СЂР°РјРё, РёС… РЅР°РґРѕ РїСЂРѕРІРµСЂРёС‚СЊ, РїРѕРєР° РЅРµ СЃРґРµР»Р°РЅРѕ (С‚РµРїРµСЂСЊ РІСЂРѕРґРµ СЃРґРµР»Р°РЅРѕ)
+            // РР»Рё РІР»РѕР¶РµРЅРЅС‹Рµ С‚СЌРіРё - С…РѕС‚СЏ, РІР»РѕР¶РµРЅРЅРѕСЃС‚СЊ, РїРѕ РёРґРµРµ, СЃС…Р»РѕРїС‹РІР°РµС‚СЃСЏ
 
             if (!curPara.attrs.empty() && curPara.attrs.back().styleEqual(curTagAttributes))
             {
@@ -311,8 +315,8 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
         if (prevFlags==curTagAttributes.style)
         {
-            //TODO: !!! Тут может быть нюанс, что идут два одинаковых тэга с доп параметрами, их надо проверить, пока не сделано (теперь вроде сделано)
-            // Или вложенные тэги - хотя, вложенность, по идее, схлопывается
+            //TODO: !!! РўСѓС‚ РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅСЋР°РЅСЃ, С‡С‚Рѕ РёРґСѓС‚ РґРІР° РѕРґРёРЅР°РєРѕРІС‹С… С‚СЌРіР° СЃ РґРѕРї РїР°СЂР°РјРµС‚СЂР°РјРё, РёС… РЅР°РґРѕ РїСЂРѕРІРµСЂРёС‚СЊ, РїРѕРєР° РЅРµ СЃРґРµР»Р°РЅРѕ (С‚РµРїРµСЂСЊ РІСЂРѕРґРµ СЃРґРµР»Р°РЅРѕ)
+            // РР»Рё РІР»РѕР¶РµРЅРЅС‹Рµ С‚СЌРіРё - С…РѕС‚СЏ, РІР»РѕР¶РµРЅРЅРѕСЃС‚СЊ, РїРѕ РёРґРµРµ, СЃС…Р»РѕРїС‹РІР°РµС‚СЃСЏ
 
             if (!curPara.attrs.empty() && curPara.attrs.back().styleEqual(curTagAttributes))
             {
@@ -332,22 +336,22 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
         if (hasFlagOnStack(BasicStyleFlags::code | BasicStyleFlags::teletype | BasicStyleFlags::pre))
         {
-            // лишние пробелы для кода, телетайпа и pre - допустимы
+            // Р»РёС€РЅРёРµ РїСЂРѕР±РµР»С‹ РґР»СЏ РєРѕРґР°, С‚РµР»РµС‚Р°Р№РїР° Рё pre - РґРѕРїСѓСЃС‚РёРјС‹
         }
         else
         {
-            // надо убрать лишние пробелы
+            // РЅР°РґРѕ СѓР±СЂР°С‚СЊ Р»РёС€РЅРёРµ РїСЂРѕР±РµР»С‹
 
             value = trimBack(value, true /* keepOneSpace */ );
 
             bool keepSpaceAtValueFront = true;
 
-            // Если текст пуст, то в добавляемом фрагменте надо удалить все ведущие пробелы
-            // Если текст содержит на последнем месте пробел - надо удалить все ведущие пробелы
+            // Р•СЃР»Рё С‚РµРєСЃС‚ РїСѓСЃС‚, С‚Рѕ РІ РґРѕР±Р°РІР»СЏРµРјРѕРј С„СЂР°РіРјРµРЅС‚Рµ РЅР°РґРѕ СѓРґР°Р»РёС‚СЊ РІСЃРµ РІРµРґСѓС‰РёРµ РїСЂРѕР±РµР»С‹
+            // Р•СЃР»Рё С‚РµРєСЃС‚ СЃРѕРґРµСЂР¶РёС‚ РЅР° РїРѕСЃР»РµРґРЅРµРј РјРµСЃС‚Рµ РїСЂРѕР±РµР» - РЅР°РґРѕ СѓРґР°Р»РёС‚СЊ РІСЃРµ РІРµРґСѓС‰РёРµ РїСЂРѕР±РµР»С‹
 
             if (curPara.text.empty() || isSpace(curPara.text.back()))
             {
-                // Уже собранный текст не пуст, и последний элемент - пробел
+                // РЈР¶Рµ СЃРѕР±СЂР°РЅРЅС‹Р№ С‚РµРєСЃС‚ РЅРµ РїСѓСЃС‚, Рё РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚ - РїСЂРѕР±РµР»
                 keepSpaceAtValueFront = false;
             }
 
@@ -374,7 +378,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
 
 inline
-Para parsePugixmlFb2ParaNode(pugi::xml_node& node)
+Para parsePugixmlFb2_ParaNode(pugi::xml_node& node)
 {
     Fb2ParaWalker walker;
     marty_pugixml::traverse_node(node, walker);

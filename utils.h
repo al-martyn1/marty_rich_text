@@ -106,6 +106,15 @@ std::string trimBoth(std::string str, IsSpace isSpace)
     return trimFront(trimBack(str, isSpace), isSpace);
 }
 
+inline
+void appendIfNonEmpty(std::vector<std::string> &v, const std::string &s)
+{
+    if (!s.empty())
+    {
+        v.emplace_back(s);
+    }
+}
+
 
 } // namespace marty_rich_text
 
