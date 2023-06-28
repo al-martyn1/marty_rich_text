@@ -38,9 +38,73 @@ struct ArtworkInfo
     DateInfo                      translateDateStart ;
     DateInfo                      translateDate      ;
 
+
+    std::string makeFullTitleString() const
+    {
+        std::string composedTitle;
+
+        if (!series.empty())
+        {
+            composedTitle = series + ": " + title;
+        }
+        else
+        {
+            composedTitle = title;
+        }
+
+        if (composedTitle.empty())
+        {
+            composedTitle = subTitle;
+        }
+        else
+        {
+            if (!subTitle.empty())
+            {
+                composedTitle += " (" + subTitle + ")";
+            }
+        }
+
+        return composedTitle;
+    }
+
+
 }; // struct ArtworkInfo
 
 
+// For debug output
+// Типа вроде распарсил FB2 нормально, пока больше не паримся
+template<typename StreamType> inline
+StreamType& operator<<(StreamType &oss, const ArtworkInfo &ai)
+{
+    //oss << ai.makeFullName(true); // force add nick
+
+    oss << "Title: " << ai.makeFullTitleString() << "\n";
+
+    bool 
+    bFirst = true;
+    for(auto genre: ai.genres)
+    {
+        if (bFirst)
+            oss << "Genres: ";
+        else
+            oss << ", ";
+
+        oss << genre;
+        bFirst = false;
+    }
+
+    if (!ai.genres.empty())
+        oss << "\n";
+
+
+    if (!ai.authors.empty())
+        oss << "Authors:\n";
+
+    for(auto author : ai.authors)
+        oss << "  " << author << "\n";
+
+    return oss;
+}
 
 
 } // namespace marty_rich_text
