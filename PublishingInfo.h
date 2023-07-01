@@ -2,6 +2,7 @@
 
 #include "AuthorInfo.h"
 #include "DateInfo.h"
+#include "TitleInfo.h"
 
 #include <set>
 #include <string>
@@ -13,7 +14,7 @@ namespace marty_rich_text {
 
 struct PublishingInfo
 {
-    std::string                   title      ;
+    TitleInfo                     title      ;
     std::string                   publisher  ;
     std::string                   year       ;
     std::string                   city       ;
@@ -25,8 +26,8 @@ struct PublishingInfo
 template<typename StreamType> inline
 StreamType& operator<<(StreamType &oss, const PublishingInfo &pi)
 {
-    if (!pi.title.empty())
-        oss << "  Title    : " << pi.title << "\n";
+    if (!pi.title.makeFullTitle().empty())
+        oss << "  Title    : " << pi.title.makeFullTitle() << "\n";
 
     if (!pi.publisher.empty())
         oss << "  Publisher: " << pi.publisher << "\n";

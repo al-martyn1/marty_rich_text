@@ -22,6 +22,7 @@ enum class BasicStyleFlags : std::uint32_t
 {
     unknown         = (std::uint32_t)(-1),
     invalid         = (std::uint32_t)(-1),
+    undefined       = (std::uint32_t)(-1),
     clean           = 0,
     blank           = 0,
     strong          = 0x00000001 /*!< выделение типа "важно", логический стиль, обычно это bold */,
@@ -69,11 +70,14 @@ MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( BasicStyleFlags, std::map, 0 )
 
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( BasicStyleFlags, std::map, 0 )
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "unknown"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Unknown"       );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "UNKNOWN"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Unknown"       );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "invalid"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Invalid"       );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "INVALID"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Invalid"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "UNDEFINED"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Undefined"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "undefined"     );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "pre"           );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "Pre"           );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "PRE"           );
@@ -148,6 +152,86 @@ enum class EVariantValueType : std::uint32_t
     typeUnsigned   = 2
 
 }; // enum class EVariantValueType : std::uint32_t
+
+
+enum class EParaType : std::uint32_t
+{
+    unknown      = (std::uint32_t)(-1),
+    invalid      = (std::uint32_t)(-1),
+    undefined    = (std::uint32_t)(-1),
+    normal       = 0 /*!< Обычный параграф */,
+    code         = 1 /*!< Все атрибуты частей параграфа содержат флаг code */,
+    pre          = 2 /*!< Все атрибуты частей параграфа содержат флаг pre */,
+    emptyLine    = 3 /*!< для FB2 тэга <empty-line> используется обычный параграф с типом emptyLine и пустым содержимым */,
+    subtitle     = 4 /*!< Title содержит в себе параграфы и пустые строки, а Subtitle - это единственный параграф */,
+    textAuthor   = 5 /*!< Автор текста цитаты или стихотворения. */,
+    stanzaV      = 6 /*!< Элемент строфы стихотворения (строчка) */
+
+}; // enum class EParaType : std::uint32_t
+
+
+enum class EExParaType : std::uint32_t
+{
+    unknown     = (std::uint32_t)(-1),
+    invalid     = (std::uint32_t)(-1),
+    undefined   = (std::uint32_t)(-1),
+    para        = 0,
+    poem        = 1,
+    cite        = 2,
+    table       = 3
+
+}; // enum class EExParaType : std::uint32_t
+
+
+enum class EAlign : std::uint32_t
+{
+    unknown     = (std::uint32_t)(-1),
+    invalid     = (std::uint32_t)(-1),
+    undefined   = (std::uint32_t)(-1),
+    left        = 0,
+    center      = 1,
+    right       = 2,
+    width       = 3
+
+}; // enum class EAlign : std::uint32_t
+
+
+enum class EVertAlign : std::uint32_t
+{
+    unknown     = (std::uint32_t)(-1),
+    invalid     = (std::uint32_t)(-1),
+    undefined   = (std::uint32_t)(-1),
+    top         = 0,
+    center      = 1,
+    mid         = 1,
+    middle      = 1,
+    bottom      = 2
+
+}; // enum class EVertAlign : std::uint32_t
+
+
+enum class ETdThType : std::uint32_t
+{
+    unknown     = (std::uint32_t)(-1),
+    invalid     = (std::uint32_t)(-1),
+    undefined   = (std::uint32_t)(-1),
+    td          = 0,
+    th          = 1
+
+}; // enum class ETdThType : std::uint32_t
+
+
+enum class EEpigraphPoemCiteType : std::uint32_t
+{
+    unknown     = (std::uint32_t)(-1),
+    invalid     = (std::uint32_t)(-1),
+    undefined   = (std::uint32_t)(-1),
+    para        = 0,
+    epigraph    = 1,
+    poem        = 2,
+    cite        = 3
+
+}; // enum class EEpigraphPoemCiteType : std::uint32_t
 
 } // namespace marty_rich_text
 

@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "Enums.h"
 #include "Para.h"
 #include "utils.h"
@@ -12,59 +13,10 @@
 namespace marty_rich_text {
 
 
-inline
-const std::unordered_map<std::string, BasicStyleFlags>&
-getFb2TagFlagsMap()
-{
-    static std::unordered_map<std::string, BasicStyleFlags> m =
-    { { "strong"       , BasicStyleFlags::strong    }
-    , { "emphasis"     , BasicStyleFlags::emphasis  }
-    , { "style"        , BasicStyleFlags::style     }
-    , { "strikethrough", BasicStyleFlags::strikeout }
-    , { "a"            , BasicStyleFlags::link      }
-    , { "sub"          , BasicStyleFlags::sub       }
-    , { "sup"          , BasicStyleFlags::sup       }
-    , { "code"         , BasicStyleFlags::code      }
-    , { "image"        , BasicStyleFlags::image     }
-
-    // HTML
-    // , { "b"  , BasicStyleFlags::bold          }
-    // , { "i"  , BasicStyleFlags::italic        }
-    // , { "u"  , BasicStyleFlags::underlined    }
-    // , { "s"  , BasicStyleFlags::strikethrough }
-    // , { "tt" , BasicStyleFlags::teletype      }
-
-    // HTML (My simple extentions)
-    // , { "strikeout" , BasicStyleFlags::strikeout }
-    // , { "font"      , BasicStyleFlags::font      }
-    // , { "color"     , BasicStyleFlags::color     }
-
-    //, { "", BasicStyleFlags:: }
-
-    };
-
-    return m;
-}
-
-inline
-BasicStyleFlags getFb2TagFlag(const std::string &t)
-{
-    const std::unordered_map<std::string, BasicStyleFlags>& m = getFb2TagFlagsMap();
-
-    std::unordered_map<std::string, BasicStyleFlags>::const_iterator it = m.find(toLower(t));
-
-    if (it!=m.end())
-    {
-        return it->second;
-    }
-
-    return BasicStyleFlags::blank;
-}
 
 
 
-
-struct Fb2ParaWalker : public marty_pugixml::tree_walker
+struct PugixmlGenericRichParaWalker : public marty_pugixml::tree_walker
 {
 
     // Normal HTML
@@ -101,13 +53,42 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
     // <color value="">
 
 
+public:
 
+    Para                                              para;
+
+
+protected:
+
+    TextAttributes                                    curTagAttributes;
     std::vector<BasicStyleFlags>                                  styleFlagsStack  ; // opened tags
     std::vector< std::unordered_map<std::string, VariantValue> >  styleValuesStack ; // opened tags
 
-    TextAttributes                curTagAttributes;
-    Para                          curPara;
+    std::unordered_map<std::string, BasicStyleFlags>  tagFlagMap;
 
+
+public:
+
+    PugixmlGenericRichParaWalker(const std::unordered_map<std::string, BasicStyleFlags> &tfm)
+    : tagFlagMap(tfm)
+    {}
+
+
+protected:
+
+    BasicStyleFlags getTagFlag(const std::string &t)
+    {
+        //const std::unordered_map<std::string, BasicStyleFlags>& m = getFb2TagFlagsMap();
+    
+        std::unordered_map<std::string, BasicStyleFlags>::const_iterator it = tagFlagMap.find(toLower(t));
+    
+        if (it!=tagFlagMap.end())
+        {
+            return it->second;
+        }
+    
+        return BasicStyleFlags::blank;
+    }
 
 
     bool hasFlagOnStack(BasicStyleFlags f) const
@@ -204,7 +185,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
 
             // Вроде отладились, пока не нужно зырить на фрагменты
 
-            // std::vector<TextFragment> fragments = curPara.splitToFragments();
+            // std::vector<TextFragment> fragments = para.splitToFragments();
             // return fragments.empty(), true;
 
             return true;
@@ -230,7 +211,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
         if (nodeName.empty())
             return true;
 
-        BasicStyleFlags tagFlag = getFb2TagFlag(nodeName);
+        BasicStyleFlags tagFlag = getTagFlag(nodeName);
         if (tagFlag==BasicStyleFlags::blank)
             return true;
 
@@ -262,7 +243,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
             //TODO: !!! Тут может быть нюанс, что идут два одинаковых тэга с доп параметрами, их надо проверить, пока не сделано (теперь вроде сделано)
             // Или вложенные тэги - хотя, вложенность, по идее, схлопывается
 
-            if (!curPara.attrs.empty() && curPara.attrs.back().styleEqual(curTagAttributes))
+            if (!para.attrs.empty() && para.attrs.back().styleEqual(curTagAttributes))
             {
                 curTagAttributes.diff = BasicStyleFlags::blank;
             }
@@ -285,13 +266,13 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
         if (nodeName.empty())
             return true;
 
-        BasicStyleFlags tagFlag = getFb2TagFlag(nodeName);
+        BasicStyleFlags tagFlag = getTagFlag(nodeName);
         if (tagFlag==BasicStyleFlags::blank)
             return true;
 
         if (styleFlagsStack.size()!=styleValuesStack.size())
         {
-            throw std::runtime_error("marty_rich_text::Fb2ParaWalker::end: stack sizes mismatch");
+            throw std::runtime_error("marty_rich_text::PugixmlGenericRichParaWalker::end: stack sizes mismatch");
         }
 
         BasicStyleFlags prevFlags = mergeStackFlags();
@@ -318,7 +299,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
             //TODO: !!! Тут может быть нюанс, что идут два одинаковых тэга с доп параметрами, их надо проверить, пока не сделано (теперь вроде сделано)
             // Или вложенные тэги - хотя, вложенность, по идее, схлопывается
 
-            if (!curPara.attrs.empty() && curPara.attrs.back().styleEqual(curTagAttributes))
+            if (!para.attrs.empty() && para.attrs.back().styleEqual(curTagAttributes))
             {
                 curTagAttributes.diff = BasicStyleFlags::blank;
             }
@@ -349,7 +330,7 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
             // Если текст пуст, то в добавляемом фрагменте надо удалить все ведущие пробелы
             // Если текст содержит на последнем месте пробел - надо удалить все ведущие пробелы
 
-            if (curPara.text.empty() || isSpace(curPara.text.back()))
+            if (para.text.empty() || isSpace(para.text.back()))
             {
                 // Уже собранный текст не пуст, и последний элемент - пробел
                 keepSpaceAtValueFront = false;
@@ -362,10 +343,10 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
         bool forceAddEmpty = false;
         if (!value.empty() || forceAddEmpty)
         {
-            curTagAttributes.pos = curPara.text.size();
+            curTagAttributes.pos = para.text.size();
             curTagAttributes.len = value.size();
-            curPara.text.append(value);
-            curPara.attrs.push_back(curTagAttributes);
+            para.text.append(value);
+            para.attrs.push_back(curTagAttributes);
         }
 
         // return true; // continue traversal
@@ -374,22 +355,10 @@ struct Fb2ParaWalker : public marty_pugixml::tree_walker
     }
 
 
-}; // struct Fb2ParaWalker
-
-
-inline
-Para parsePugixmlFb2_ParaNode(pugi::xml_node& node)
-{
-    Fb2ParaWalker walker;
-    marty_pugixml::traverse_node(node, walker);
-    walker.curPara.mergeEqualAttrs();
-    walker.curPara.fixAttrs();
-    return walker.curPara;
-}
+}; // struct PugixmlGenericRichParaWalker
 
 
 
 
 } // namespace marty_rich_text
-
 

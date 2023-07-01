@@ -1,6 +1,6 @@
 // Базовые стили, флаги
 
-unknown,invalid=-1
+unknown,invalid,undefined=-1
 clean,blank = 0
 
 strong = 0x01 // выделение типа "важно", логический стиль, обычно это bold

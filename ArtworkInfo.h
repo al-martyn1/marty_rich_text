@@ -4,6 +4,7 @@
 #include "AuthorInfo.h"
 #include "DateInfo.h"
 #include "Para.h"
+#include "TitleInfo.h"
 #include "TranslaterInfo.h"
 #include "utils.h"
 
@@ -18,55 +19,22 @@ namespace marty_rich_text {
 struct ArtworkInfo
 {
     std::vector<AuthorInfo>       authors    ;
-    std::string                   series     ;
-    std::string                   title      ;
-    std::string                   subTitle   ;
+    TitleInfo                     title      ;
+
     std::set<std::string>         genres     ;
 
     std::string                   lang       ; // langTag, ru-RU, en-US, en-GB
 
-    DateInfo                      dateStart  ;
-    DateInfo                      date       ; // End date
+    DateRangeInfo                 date       ;
 
     std::vector<Para>             annotation ; // Пока так, не читаем, возможно, поменяется
 
 
-    std::string                   orgTitle   ;
+    TitleInfo                     orgTitle   ;
     std::string                   orgLang    ; // язык оригинала, для переводных документов
     std::vector<TranslaterInfo>   translaters; // переводчики
 
-    DateInfo                      translateDateStart ;
-    DateInfo                      translateDate      ;
-
-
-    std::string makeFullTitleString() const
-    {
-        std::string composedTitle;
-
-        if (!series.empty())
-        {
-            composedTitle = series + ": " + title;
-        }
-        else
-        {
-            composedTitle = title;
-        }
-
-        if (composedTitle.empty())
-        {
-            composedTitle = subTitle;
-        }
-        else
-        {
-            if (!subTitle.empty())
-            {
-                composedTitle += " (" + subTitle + ")";
-            }
-        }
-
-        return composedTitle;
-    }
-
+    DateRangeInfo                 translateDate;
 
 }; // struct ArtworkInfo
 
@@ -78,7 +46,7 @@ StreamType& operator<<(StreamType &oss, const ArtworkInfo &ai)
 {
     //oss << ai.makeFullName(true); // force add nick
 
-    oss << "Title: " << ai.makeFullTitleString() << "\n";
+    oss << "Title: " << ai.title.makeFullTitle() << "\n";
 
     bool 
     bFirst = true;
@@ -98,10 +66,44 @@ StreamType& operator<<(StreamType &oss, const ArtworkInfo &ai)
 
 
     if (!ai.authors.empty())
+    {
         oss << "Authors:\n";
+        for(auto author : ai.authors)
+        {
+            oss << "  " << author << "\n";
+        }
+    }
 
-    for(auto author : ai.authors)
-        oss << "  " << author << "\n";
+    oss << "Lang: " << ai.lang << "\n";
+
+    if (!ai.date.empty())
+    {
+        oss << "Date: " << ai.date.getDisplayValue() << "\n";
+    }
+
+    if (!ai.orgTitle.makeFullTitle().empty())
+    {
+        oss << "Title (original): " << ai.orgTitle.makeFullTitle() << "\n";
+    }
+
+    if (!ai.orgLang.empty())
+    {
+        oss << "Lang (original): " << ai.orgLang << "\n";
+    }
+
+    if (!ai.translaters.empty())
+    {
+        oss << "Translaters:\n";
+        for(auto translater : ai.translaters)
+        {
+            oss << "  " << translater << "\n";
+        }
+    }
+
+    if (!ai.translateDate.empty())
+    {
+        oss << "Date (translation): " << ai.translateDate.getDisplayValue() << "\n";
+    }
 
     return oss;
 }

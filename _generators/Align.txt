@@ -1,0 +1,5 @@
+Unknown,Invalid,Undefined = -1
+left   = 0
+center
+right
+width

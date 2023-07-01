@@ -15,7 +15,7 @@ struct AuthorInfo
 
     std::string    nickName  ;
 
-    std::string    id        ; // Уникальный (?) идентификатор автора (в какой-то системе, обычно вроде UUID)
+    std::string    id        ; // Уникальный (?) идентификатор автора (в какой-то системе; обычно вроде UUID)
 
     std::unordered_map<std::string, std::string>  contacts; // email
 

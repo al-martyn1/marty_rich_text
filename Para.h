@@ -32,8 +32,77 @@ namespace marty_rich_text{
 */
 struct Para
 {
+    EParaType                      paraType = EParaType::normal; //!< Тип параграфа: normal, code, emptyLine 
+    EAlign                         align    = EAlign::left     ; //!< Выравнивание, по умолчанию - по левому краю. Или - undefined?
+
+    std::string                    id;    //!< (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
+    std::string                    style; //!< (опциональный) - стиль параграфа
+    std::string                    lang;  //!< xml:lang (опциональный) - язык.
+
     std::string                    text ; //!< Текст параграфа
     std::vector<TextAttributes>    attrs; //!< Атрибуты параграфа
+
+    bool empty() const
+    {
+        if (text.empty() && attrs.empty())
+            return true;
+
+        for(const auto &attr: attrs)
+        {
+            if ((attr.style&BasicStyleFlags::image)!=0)
+                return false;
+        }
+
+        // Параграм с единственным пробелом является пустым
+        if (text==" ")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool allAttrsHasFlags(BasicStyleFlags f) const
+    {
+        if (attrs.empty() || f==BasicStyleFlags::blank)
+        {
+            return false;
+        }
+
+        for(const auto &attr: attrs)
+        {
+            if ((attr.style&f)==f)
+                continue;
+
+            return false;
+        }
+
+        return true;
+    }
+    
+    bool isCode() const
+    {
+        return allAttrsHasFlags(BasicStyleFlags::code);
+    }
+
+    bool isTeletype() const
+    {
+        return allAttrsHasFlags(BasicStyleFlags::teletype);
+    }
+
+    bool isPre() const
+    {
+        return allAttrsHasFlags(BasicStyleFlags::pre);
+    }
+
+
+    static
+    Para emptyLine()
+    {
+        Para p;
+        p.paraType = EParaType::emptyLine;
+        return p;
+    }
 
     // Тут надо что-то сделать, проверки, чтобы атрибуты не перекрывались, может, что-то ещё
     // Или - пофиг? Поверим на слово

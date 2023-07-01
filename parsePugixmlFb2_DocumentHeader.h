@@ -95,12 +95,12 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
     //               Ходение по букам
     // (Жизнь и похождения матроса Ивана Тельняшкина)
 
-    ai.title = marty_pugixml::get_node_all_text(titleInfoNode.child("book-title"));
+    ai.title.title = marty_pugixml::get_node_all_text(titleInfoNode.child("book-title"));
     
     ai.lang  = marty_pugixml::get_node_all_text(titleInfoNode.child("lang"));
 
     // ai.dateStart - в FB2 вроде нет аналога
-    ai.date  = parsePugixmlFb2_DateInfo(titleInfoNode.child("date")); // дата окончания создания произведения/дата выпуска релиза-принта, и тп
+    ai.date.date  = parsePugixmlFb2_DateInfo(titleInfoNode.child("date")); // дата окончания создания произведения/дата выпуска релиза-принта, и тп
 
 
     // std::vector<Para>             annotation ; // Пока так, не читаем, возможно, поменяется
@@ -123,11 +123,6 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
     }
 
 
-    // В FB2 вроде неь
-
-    //     DateInfo                      translateDateStart ;
-    //     DateInfo                      translateDate      ;
-
     return ai;
 
 }
@@ -142,8 +137,28 @@ DocumentInfo parsePugixmlFb2_DocumentInfo(pugi::xml_node& fb2DescriptionNode)
     //TODO: !!!
     // Тут надо бы распарсить содержимое document-info, но это пока никому не нужно
 
-    // <publisher>Манн, Иванов и Фербер</publisher>
-    // <publisher>ЗАО Издательский дом «Питер»</publisher>
+    // <publish-info>
+    //   <book-name>Верховный алгоритм: как машинное обучение изменит наш мир</book-name>
+    //   <publisher>Манн, Иванов и Фербер</publisher>
+    //   <city>Москва</city>
+    //   <year>2016</year>
+    //   <isbn>978-5-00100-172-0</isbn>
+    // </publish-info>
+
+    // <publish-info>
+    //   <book-name>Виртуальные  машины: несколько компьютеров в  одном (+CD)</book-name>
+    //   <publisher>ЗАО Издательский дом «Питер»</publisher>
+    //   <city>Санкт-Петербург</city>
+    //   <year>2006</year>
+    //   <isbn>5-469-01338-3</isbn>
+    // </publish-info>
+
+    // <publish-info>
+    //   <publisher>Издательский дом "Питер"</publisher>
+    //   <year>2018</year>
+    //   <isbn>978-5-496-02689-5</isbn>
+    // </publish-info>
+
     // <publisher>
     //   <first-name>Литагент</first-name>
     //   <last-name>Эксмо (новый каталог ОСНОВНОЙ)</last-name>
@@ -172,17 +187,31 @@ PublishingInfo parsePugixmlFb2_PublishingInfo(pugi::xml_node& fb2DescriptionNode
 
     pugi::xml_node publishInfoNode = fb2DescriptionNode.child("publish-info");
 
-    pi.title     = marty_pugixml::get_node_all_text(publishInfoNode.child("book-name"));
+    pi.title.title  = marty_pugixml::get_node_all_text(publishInfoNode.child("book-name"));
 
-    pi.publisher = marty_pugixml::get_node_all_text(publishInfoNode.child("publisher"));
-    pi.year      = marty_pugixml::get_node_all_text(publishInfoNode.child("year"));
-    pi.city      = marty_pugixml::get_node_all_text(publishInfoNode.child("city"));
-    pi.isbn      = marty_pugixml::get_node_all_text(publishInfoNode.child("isbn"));
+    pi.publisher    = marty_pugixml::get_node_all_text(publishInfoNode.child("publisher"));
+    pi.year         = marty_pugixml::get_node_all_text(publishInfoNode.child("year"));
+    pi.city         = marty_pugixml::get_node_all_text(publishInfoNode.child("city"));
+    pi.isbn         = marty_pugixml::get_node_all_text(publishInfoNode.child("isbn"));
 
     // ??? <sequence name="Мировой компьютерный бестселлер"/>
 
     return pi;
 }
+
+//----------------------------------------------------------------------------
+inline
+DocumentHeader parsePugixmlFb2_DocumentHeader(pugi::xml_node& fb2DescriptionNode)
+{
+    DocumentHeader dh;
+
+    dh.artworkInfo    = parsePugixmlFb2_ArtworkInfo(fb2DescriptionNode);
+    dh.documentInfo   = parsePugixmlFb2_DocumentInfo(fb2DescriptionNode);
+    dh.publishingInfo = parsePugixmlFb2_PublishingInfo(fb2DescriptionNode);
+
+    return dh;
+}
+
 
 // struct DocumentHeader
 // {
