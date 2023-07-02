@@ -47,95 +47,51 @@ enum class BasicStyleFlags : std::uint32_t
 
 MARTY_CPP_MAKE_ENUM_FLAGS(BasicStyleFlags)
 
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( BasicStyleFlags, std::map, 0 )
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::unknown      , "Unknown"    );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::pre          , "Pre"        );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::clean        , "Clean"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::image        , "Image"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::strong       , "Strong"     );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::emphasis     , "Emphasis"   );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::code         , "Code"       );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::sub          , "Sub"        );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::teletype     , "Teletype"   );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::sup          , "Sup"        );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::style        , "Style"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::bold         , "Bold"       );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::italic       , "Italic"     );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::underlined   , "Underlined" );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::strikeout    , "Strikeout"  );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::link         , "Link"       );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::color        , "Color"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::font         , "Font"       );
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( BasicStyleFlags, std::map, 0 )
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( BasicStyleFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::unknown      , "unknown"    );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::pre          , "pre"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::clean        , "clean"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::image        , "image"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::strong       , "strong"     );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::emphasis     , "emphasis"   );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::code         , "code"       );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::sub          , "sub"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::teletype     , "teletype"   );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::sup          , "sup"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::style        , "style"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::bold         , "bold"       );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::italic       , "italic"     );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::underlined   , "underlined" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::strikeout    , "strikeout"  );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::link         , "link"       );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::color        , "color"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( BasicStyleFlags::font         , "font"       );
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( BasicStyleFlags, std::map, 1 )
 
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( BasicStyleFlags, std::map, 0 )
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( BasicStyleFlags, std::map, 1 )
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "unknown"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "UNKNOWN"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Unknown"       );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "invalid"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "INVALID"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Invalid"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "UNDEFINED"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "Undefined"     );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::unknown      , "undefined"     );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "pre"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "Pre"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::pre          , "PRE"           );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "clean"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "Clean"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "CLEAN"         );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "blank"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "Blank"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::clean        , "BLANK"         );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::image        , "image"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::image        , "Image"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::image        , "IMAGE"         );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strong       , "strong"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strong       , "Strong"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strong       , "STRONG"        );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::emphasis     , "emphasis"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::emphasis     , "Emphasis"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::emphasis     , "EMPHASIS"      );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::code         , "code"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::code         , "Code"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::code         , "CODE"          );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sub          , "sub"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sub          , "Sub"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sub          , "SUB"           );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::teletype     , "teletype"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::teletype     , "Teletype"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::teletype     , "TELETYPE"      );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sup          , "sup"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sup          , "Sup"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::sup          , "SUP"           );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::style        , "style"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::style        , "Style"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::style        , "STYLE"         );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::bold         , "bold"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::bold         , "Bold"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::bold         , "BOLD"          );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::italic       , "italic"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::italic       , "Italic"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::italic       , "ITALIC"        );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::underlined   , "underlined"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::underlined   , "Underlined"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::underlined   , "UNDERLINED"    );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "strikeout"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "Strikeout"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "STRIKEOUT"     );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "strikethrough" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "Strikethrough" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::strikeout    , "STRIKETHROUGH" );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::link         , "link"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::link         , "Link"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::link         , "LINK"          );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::color        , "color"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::color        , "Color"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::color        , "COLOR"         );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::font         , "font"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::font         , "Font"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( BasicStyleFlags::font         , "FONT"          );
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( BasicStyleFlags, std::map, 0 )
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( BasicStyleFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(BasicStyleFlags, std::set)
 
@@ -195,6 +151,24 @@ enum class EAlign : std::uint32_t
 
 }; // enum class EAlign : std::uint32_t
 
+MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( EAlign, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EAlign::unknown  , "unknown" );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EAlign::left     , "left"    );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EAlign::center   , "center"  );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EAlign::right    , "right"   );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EAlign::width    , "width"   );
+MARTY_CPP_ENUM_CLASS_SERIALIZE_END( EAlign, std::map, 1 )
+
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EAlign, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::unknown  , "unknown"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::unknown  , "invalid"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::unknown  , "undefined" );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::left     , "left"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::center   , "center"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::right    , "right"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EAlign::width    , "width"     );
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EAlign, std::map, 1 )
+
 
 enum class EVertAlign : std::uint32_t
 {
@@ -209,6 +183,24 @@ enum class EVertAlign : std::uint32_t
 
 }; // enum class EVertAlign : std::uint32_t
 
+MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( EVertAlign, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EVertAlign::unknown  , "unknown" );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EVertAlign::center   , "center"  );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EVertAlign::top      , "top"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( EVertAlign::bottom   , "bottom"  );
+MARTY_CPP_ENUM_CLASS_SERIALIZE_END( EVertAlign, std::map, 1 )
+
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EVertAlign, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::unknown  , "unknown"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::unknown  , "invalid"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::unknown  , "undefined" );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::center   , "center"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::center   , "mid"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::center   , "middle"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::top      , "top"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EVertAlign::bottom   , "bottom"    );
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EVertAlign, std::map, 1 )
+
 
 enum class ETdThType : std::uint32_t
 {
@@ -219,6 +211,20 @@ enum class ETdThType : std::uint32_t
     th          = 1
 
 }; // enum class ETdThType : std::uint32_t
+
+MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( ETdThType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETdThType::th       , "th"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETdThType::unknown  , "unknown" );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETdThType::td       , "td"      );
+MARTY_CPP_ENUM_CLASS_SERIALIZE_END( ETdThType, std::map, 1 )
+
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETdThType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::th       , "th"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::unknown  , "unknown"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::unknown  , "invalid"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::unknown  , "undefined" );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::td       , "td"        );
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( ETdThType, std::map, 1 )
 
 
 enum class EEpigraphPoemCiteType : std::uint32_t

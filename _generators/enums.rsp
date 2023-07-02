@@ -10,6 +10,8 @@
 #--enum-values-style=PascalStyle
 --enum-serialize-style=All
 
+--serialize-style=HyphenStyle
+
 --namespace=marty_rich_text
 --override-template-parameter=EnumNameFormat:E$(ENAMNAME)
 #--override-template-parameter=EnumFlagsNameFormat:E$(ENAMNAME)

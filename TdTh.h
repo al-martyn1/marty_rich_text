@@ -21,6 +21,7 @@ namespace marty_rich_text {
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_td
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_th
 
+//! В FB2 тэги td/th содержат непосредственно один абзац, без тэга <p>, но во многих других форматах абзацев в ячейке может быть несколько
 struct TdTh
 {
     ETdThType        tdthType = ETdThType::td; //!< По-умолчанию - обычная ячейка, не хидерная
@@ -34,6 +35,15 @@ struct TdTh
 
     EAlign           align      = EAlign::left; //!< Выравнивание, по умолчанию - по левому краю. Или - undefined?
     EVertAlign       vertAlign  = EVertAlign::top;
+
+    std::vector<Para>   paras;
+
+    bool empty() const
+    {
+        return paras.empty();
+    }
+
+
 
 }; // struct TdTh
 

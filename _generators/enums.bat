@@ -2,8 +2,8 @@
 
 @set FLAGS_ENUM=--enum-flags=0  --enum-flags=enum-class,type-decl
 @set FLAGS_FLAGS=--enum-flags=0 --enum-flags=flags,enum-class,type-decl
-@set FLAGS_SERIALIZE=--enum-flags=serialize,deserialize
-@set FLAGS_SERIALIZE_PLUS=--enum-flags=serialize,deserialize,extra,serializeSet,deserializeSet
+@set FLAGS_SERIALIZE=--enum-flags=serialize,deserialize,lowercase
+@set FLAGS_SERIALIZE_PLUS=--enum-flags=serialize,deserialize,lowercase,extra,serializeSet,deserializeSet
 
 @set UINT32=--underlaying-type=std::uint32_t
 
@@ -13,9 +13,9 @@
 %FLAGS_ENUM%  %UINT32%                         -E=VariantValueType        -F=@VariantValueType.txt ^
 %FLAGS_ENUM%  %UINT32%                         -E=ParaType                -F=@ParaType.txt ^
 %FLAGS_ENUM%  %UINT32%                         -E=ExParaType              -F=@ExParaType.txt ^
-%FLAGS_ENUM%  %UINT32%                         -E=Align                   -F=@Align.txt ^
-%FLAGS_ENUM%  %UINT32%                         -E=VertAlign               -F=@VertAlign.txt ^
-%FLAGS_ENUM%  %UINT32%                         -E=TdThType                -F=@TdThType.txt ^
+%FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=Align                   -F=@Align.txt ^
+%FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=VertAlign               -F=@VertAlign.txt ^
+%FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=TdThType                -F=@TdThType.txt ^
 %FLAGS_ENUM%  %UINT32%                         -E=EpigraphPoemCiteType    -F=@EpigraphPoemCiteType.txt ^
 ..\Enums.h
 
