@@ -2,4 +2,8 @@ Unknown,Invalid,Undefined = -1
 Para    =  0
 Poem
 Cite
+Epigraph
 Table
+Code
+Teletype
+Pre

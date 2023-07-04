@@ -76,12 +76,36 @@ namespace marty_rich_text {
 // Но этот цикл добавляет гемора
 
 
-// epigraph
-//   Subelements: Содержит в перечисленном порядке элементы:
-//     1 Произвольный набор (в произвольном количестве): p, poem, cite, empty-line
-//     2 text-author - 0..n (любое число, опционально).
-//   Dependant  : body, section, poem
-//  
+
+//struct Para;
+struct Block;
+struct Poem;
+struct CiteEpigraph; // Cite or Epigraph
+// struct Table;
+
+
+//! Некий блок содержимого из Para, Poem, Table...
+
+struct Block
+{
+    EBlockType  blockType;
+
+    // Тут лежит макс по одному элементу, в зависимости от blockType,
+    // Но даже если blockType соответствует, то может не быть соотв содержимого
+    // Или любой blockType может содержать не по одному элементу?
+
+    //NOTE: !!! blockType::code, blockType::teletype и blockType::pre
+    //          могут содержать произвольное количество para - для группировки с одним фоном
+    //          Но могут и по одному para содержать
+
+    std::vector<Para>            para        ;
+    std::vector<Poem>            poem        ;
+    std::vector<CiteEpigraph>    citeEpigraph;
+    std::vector<Table>           table;
+
+}; // struct Block
+
+
 // poem
 //   Subelements: Должен содержать последовательность элементов в таком порядке:
 //     1 <title> 0..1 (опционально) - название;
@@ -90,22 +114,16 @@ namespace marty_rich_text {
 //     4 <text-author> 0..n (любое число, опционально) - автор стиха;
 //     5 <date> 0..1 (опционально) - дата написания.
 //   Dependant  : section, cite, epigraph, annotation, history
-//  
-// cite
-//   Subelements: Содержит в указанном порядке следующие элементы:
-//     1 Произвольный набор (в произвольном количестве):
-//       p, subtitle, empty-line, poem, table
-//     2 text-author - 0..n (любое число, опционально) - подпись, автор цитируемого текста.
-//   Dependant  : annotation, epigraph, history, section
-
-
-struct Epigraph;
-
-
+//   Атрибуты
+//   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
+//   xml:lang (опциональный) - язык.
 struct Poem
 {
+    std::string                 id          ;
+    std::string                 lang        ;
+
     Title                       title       ; //!< Заголовок, есть метод empty(), optional не нужен
-    std::vector<Epigraph>       epigraphs   ;
+    std::vector<Block>          epigraphs   ;
     std::vector<Stanza>         stanzas     ;
     std::vector<TextAuthor>     textAuthors ; //!< Это Para на самом деле
     DateRangeInfo               date        ; //!< Диапазон дат, есть метод empty(), optional не нужен
@@ -113,24 +131,39 @@ struct Poem
 }; // struct Poem
 
 
+
+
 // cite
-// Subelements: Произвольный набор: p, subtitle, empty-line, poem, table
-// p, p, subtitle, empty-line - это один класс Para
-// Итого у нас выбор подэлементов из Para, Poem, Table
-struct Cite;
+//   Subelements: Содержит в указанном порядке следующие элементы:
+//     1 Произвольный набор (в произвольном количестве):
+//       p, subtitle, empty-line, poem, table
+//     2 text-author - 0..n (любое число, опционально) - подпись, автор цитируемого текста.
+//   Dependant  : annotation, epigraph, history, section
+//   Атрибуты
+//   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
+//   xml:lang (опциональный) - язык.
 
+// epigraph
+//   Subelements: Содержит в перечисленном порядке элементы:
+//     1 Произвольный набор (в произвольном количестве): p, poem, cite, empty-line
+//     2 text-author - 0..n (любое число, опционально).
+//   Dependant  : body, section, poem
+//   Атрибуты
+//   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
 
-
-
-
-
-struct Cite
+struct CiteEpigraph
 {
+    std::string                 id          ;
+    std::string                 lang        ;
 
+    EBlockType                  blockType   ; //!< Только EBlockType::cite или EBlockType::epigraph
+
+    std::vector<Block>          blocks      ;
+    std::vector<TextAuthor>     textAuthors ; //!< Это Para на самом деле
 
 }; // struct Cite
 
-// EpigraphPoemCite.h
+
 
 
 } // namespace marty_rich_text

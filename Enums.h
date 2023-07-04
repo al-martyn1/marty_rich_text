@@ -126,7 +126,7 @@ enum class EParaType : std::uint32_t
 }; // enum class EParaType : std::uint32_t
 
 
-enum class EExParaType : std::uint32_t
+enum class EBlockType : std::uint32_t
 {
     unknown     = (std::uint32_t)(-1),
     invalid     = (std::uint32_t)(-1),
@@ -134,9 +134,13 @@ enum class EExParaType : std::uint32_t
     para        = 0,
     poem        = 1,
     cite        = 2,
-    table       = 3
+    epigraph    = 3,
+    table       = 4,
+    code        = 5,
+    teletype    = 6,
+    pre         = 7
 
-}; // enum class EExParaType : std::uint32_t
+}; // enum class EBlockType : std::uint32_t
 
 
 enum class EAlign : std::uint32_t

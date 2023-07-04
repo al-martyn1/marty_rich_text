@@ -12,7 +12,7 @@
 %FLAGS_FLAGS% %UINT32% %FLAGS_SERIALIZE_PLUS%  -E=BasicStyleFlags         -F=@BasicStyleFlags.txt  ^
 %FLAGS_ENUM%  %UINT32%                         -E=VariantValueType        -F=@VariantValueType.txt ^
 %FLAGS_ENUM%  %UINT32%                         -E=ParaType                -F=@ParaType.txt ^
-%FLAGS_ENUM%  %UINT32%                         -E=ExParaType              -F=@ExParaType.txt ^
+%FLAGS_ENUM%  %UINT32%                         -E=BlockType               -F=@BlockType.txt ^
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=Align                   -F=@Align.txt ^
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=VertAlign               -F=@VertAlign.txt ^
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=TdThType                -F=@TdThType.txt ^

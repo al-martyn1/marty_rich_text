@@ -55,6 +55,16 @@ DateInfo parsePugixmlFb2_DateInfo(pugi::xml_node& node)
 }
 
 //----------------------------------------------------------------------------
+inline
+DateRangeInfo parsePugixmlFb2_DateRangeInfo(pugi::xml_node& node)
+{
+    DateInfo di = parsePugixmlFb2_DateInfo(pugi::xml_node& node)
+    DateRangeInfo dri;
+    dri.date = di;
+    return dri;
+}
+
+//----------------------------------------------------------------------------
 //! ArtworkInfo извлекается из тэга FictionBook/description/title-info. Тут на входе мы ожидаем description узел, так как наши представления об иерархии данных отличаются от дизайнеров FB2.
 inline
 ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
