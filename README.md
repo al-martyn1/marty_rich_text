@@ -12,9 +12,13 @@
 
 Базовые стили strong/emphasis/code/teletype/pre/sub/sup/bold/italic/strikeout/underlined
 работают внутри параграфа (struct Para) и не иерархичны: так, 
+```
  <emphasis><emphasis>Double deep emphasis</emphasis></emphasis>
+```
  и 
+```
  <emphasis>Single deep emphasis</emphasis>
+```
 не будут ничем отличаться.
 
 Это не так клёво, как у взрослых, но достаточно клёво для отображения FB2 и маркдауна,
