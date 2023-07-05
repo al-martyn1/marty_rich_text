@@ -8,7 +8,7 @@
 Также вполне классический xHTML и/или его части без особых излишеств можно присунуть
 для оформления отдельных визуальных элементов (по типу такого - https://www.viksoe.dk/code/minihtml.htm).
 
-Парсер FB2 не свой, используется pugixml.
+Парсер FB2 не свой, используется pugixml, и хелперы из https://github.com/al-martyn1/marty_pugixml.
 
 Базовые стили strong/emphasis/code/teletype/pre/sub/sup/bold/italic/strikeout/underlined
 работают внутри параграфа (struct Para) и не иерархичны: так, 
