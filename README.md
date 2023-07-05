@@ -233,7 +233,7 @@ a - удаляем, если текст в []
 table - удаляем, не умеем с ними работать
 
 Элементы нижнего уровня, без подразделов, только оформление.
-p, v, subtitle, empty-line, text-author
+p, v, subtitle, empty-line, text-author - по факту - это одно и то же.
 
 
 strong
@@ -245,9 +245,10 @@ sub
 sup
 code
 image
-
+```
    <empty-line/>
    <p>Some text <image l:href="#img_3"/> more text</p>
    <empty-line/>
    <p><strong>Рис. 1.1.</strong> <emphasis>Взаимоотношения между различными стандартами UNIX и C</emphasis></p>
    <p>В 2008 году  <emphasis>The New York Times</emphasis>, проделал</p>
+```
