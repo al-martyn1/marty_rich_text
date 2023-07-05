@@ -40,7 +40,7 @@ enum class BasicStyleFlags : std::uint32_t
     link            = 0x00000800 /*!< гиперссылка */,
     color           = 0x00001000 /*!< цвет задан явно */,
     font            = 0x00002000 /*!< фонт задан явно */,
-    image           = 0x00004000 /*!< картинка */,
+    image           = 0x00004000 /*!< картинка, к ней нет никакого текста в параграфе - длина фрагмента нулевая */,
     style           = 0x00008000 /*!< кастомный стиль */
 
 }; // enum class BasicStyleFlags : std::uint32_t
@@ -117,11 +117,13 @@ enum class EParaType : std::uint32_t
     undefined    = (std::uint32_t)(-1),
     normal       = 0 /*!< Обычный параграф */,
     code         = 1 /*!< Все атрибуты частей параграфа содержат флаг code */,
-    pre          = 2 /*!< Все атрибуты частей параграфа содержат флаг pre */,
-    emptyLine    = 3 /*!< для FB2 тэга <empty-line> используется обычный параграф с типом emptyLine и пустым содержимым */,
-    subtitle     = 4 /*!< Title содержит в себе параграфы и пустые строки, а Subtitle - это единственный параграф */,
-    textAuthor   = 5 /*!< Автор текста цитаты или стихотворения. */,
-    stanzaV      = 6 /*!< Элемент строфы стихотворения (строчка) */
+    teletype     = 2 /*!< Все атрибуты частей параграфа содержат флаг teletype */,
+    pre          = 3 /*!< Все атрибуты частей параграфа содержат флаг pre */,
+    image        = 4 /*!< Имеется один атрибут с флагом image, сам para не содержит текста */,
+    emptyLine    = 5 /*!< для FB2 тэга <empty-line> используется обычный параграф с типом emptyLine и пустым содержимым */,
+    subtitle     = 6 /*!< Title содержит в себе параграфы и пустые строки, а Subtitle - это единственный параграф */,
+    textAuthor   = 7 /*!< Автор текста цитаты или стихотворения. */,
+    stanzaV      = 8 /*!< Элемент строфы стихотворения (строчка) */
 
 }; // enum class EParaType : std::uint32_t
 
@@ -229,19 +231,6 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETdThType, std::map, 1 )
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::unknown  , "undefined" );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETdThType::td       , "td"        );
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( ETdThType, std::map, 1 )
-
-
-enum class EEpigraphPoemCiteType : std::uint32_t
-{
-    unknown     = (std::uint32_t)(-1),
-    invalid     = (std::uint32_t)(-1),
-    undefined   = (std::uint32_t)(-1),
-    para        = 0,
-    epigraph    = 1,
-    poem        = 2,
-    cite        = 3
-
-}; // enum class EEpigraphPoemCiteType : std::uint32_t
 
 } // namespace marty_rich_text
 

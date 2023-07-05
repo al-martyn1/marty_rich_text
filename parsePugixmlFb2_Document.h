@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CiteEpigraphPoemSection.h"
 #include "DocumentHeader.h"
 #include "Stanza.h"
 #include "Table.h"
@@ -10,6 +11,10 @@
 
 #include "marty_pugixml/marty_pugixml.h"
 #include "parsePugixmlFb2_DocumentHeader.h"
+
+
+#include <exception>
+#include <stdexcept>
 
 
 // Links - 
@@ -45,7 +50,12 @@ Title parsePugixmlFb2_Title(pugi::xml_node& node)
     {
         std::string pNodeName = pNode.name();
         if (pNodeName!="p" && pNodeName!="empty-line")
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: title: found unknown tag: " + pNodeName);
+            #endif
             continue;
+        }
 
         if (pNodeName=="empty-line")
         {
@@ -77,6 +87,14 @@ Para parsePugixmlFb2_Subtitle(pugi::xml_node& node)
     Para p     = parsePugixmlFb2_Para(node);
     p.paraType = EParaType::subtitle;
     return p;
+}
+
+//----------------------------------------------------------------------------
+//TODO: !!! Пока изображение представляем, как пустой параграф, но надо доделать
+inline
+Para parsePugixmlFb2_Image(pugi::xml_node& node)
+{
+    return Pata::emptyLine()
 }
 
 //----------------------------------------------------------------------------
@@ -131,8 +149,12 @@ Stanza parsePugixmlFb2_Stanza(pugi::xml_node& node)
     {
         std::string vNodeName = vNode.name();
         if (pNodeName!="v")
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: stanza: found unknown tag: " + vNodeName);
+            #endif
             continue;
-
+        }
         auto v = parsePugixmlFb2_StanzaV(vNode);
         s.lines.emplace_back();
     }
@@ -142,9 +164,11 @@ Stanza parsePugixmlFb2_Stanza(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node)
+TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node, const std::string &tagName)
 {
     TdTh tdth;
+
+    std::unordered_set<std::string> proceseedAttrs;
 
     // id (опциональный);
     // style (опциональный);
@@ -152,24 +176,26 @@ TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node)
     parsePugixml_AttrsIdLangStyle(tdth, node);
 
     // align (опциональный) - "left"/"right"/"center"
-    tdth.align      = enum_deserialize(node.attribute("align"), EAlign::left);
+    tdth.align      = enum_deserialize(parsePugixml_AttrGetStrHelper(node, "align", &proceseedAttrs)  /* node.attribute("align") */ , EAlign::left);
 
     // valign (опциональный) - "top"/"middle"/"bottom"
-    tdth.vertAlign  = enum_deserialize(node.attribute("valign"), EVertAlign::top);
+    tdth.vertAlign  = enum_deserialize(parsePugixml_AttrGetStrHelper(node, "valign", &proceseedAttrs) /* node.attribute("valign") */ , EVertAlign::top);
 
     // colspan (опциональный);
-    tdth.colspan = (std::size_t)node.attribute("colspan").as_uint(0);
+    tdth.colspan = (std::size_t)parsePugixml_AttrGetHelper(node, "colspan", &proceseedAttrs).as_uint(0); //  node.attribute("colspan").as_uint(0);
     
     // rowspan (опциональный);
-    tdth.rowspan = (std::size_t)node.attribute("rowspan").as_uint(0);
+    tdth.rowspan = (std::size_t)parsePugixml_AttrGetHelper(node, "rowspan", &proceseedAttrs).as_uint(0) // node.attribute("rowspan").as_uint(0);
 
 
-    Para p = parsePugixmlFb2_Para(node);
+    Para p = parsePugixmlFb2_Para(node, &proceseedAttrs);
     if (!p.empty())
     {
         p.align = tdth.align;
         tdth.paras.emplace_back(p);
     }
+
+    parsePugixml_AttrCheckAllProcessed(node, tagName, proceseedAttrs);
 
     return tdth;
 
@@ -190,9 +216,9 @@ Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
 {
     Tr tr;
 
-    // std::string strAlign = 
+    std::unordered_set<std::string> proceseedAttrs;
 
-    EAlign align =  enum_deserialize(node.attribute("align"), EAlign::undefined);
+    EAlign align =  enum_deserialize(parsePugixml_AttrGetStrHelper(node, "align", &proceseedAttrs) /* node.attribute("align") */ , EAlign::undefined);
     if (align!=EAlign::undefined)
     {
         tr.align = align;
@@ -207,9 +233,13 @@ Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
         ETdThType tdThType = enum_deserialize(tdthName, ETdThType::unknown);
 
         if (tdThType==ETdThType::unknown)
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: tr: found unknown tag: " + tdthName);
+            #endif
             continue;
-
-        TdTh tdth     = parsePugixmlFb2_TdTh(tdthNode);
+        }
+        TdTh tdth     = parsePugixmlFb2_TdTh(tdthNode, tdthName);
         tdth.tdthType = tdThType;
 
         if (align!=EAlign::undefined)
@@ -219,6 +249,8 @@ Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
 
         tr.trLine.emplace_back(tdth);
     }
+
+    parsePugixml_AttrCheckAllProcessed(node, "tr", proceseedAttrs);
 
     return tr;
 
@@ -236,18 +268,25 @@ inline
 Table parsePugixmlFb2_Table(pugi::xml_node& node)
 {
     Table table;
-    parsePugixml_AttrsIdStyle(table, node);
+    std::unordered_set<std::string> proceseedAttrs;
+
+    parsePugixml_AttrsIdStyle(table, node, &proceseedAttrs);
     for(pugi::xml_node childNode=node.first_child(); childNode; childNode=childNode.next_sibling())
     {
         std::string childName = childNode.name();
         if (childName!="tr")
         {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: table: found unknown tag: " + childName);
+            #endif
             continue;
         }
 
         Tr tr = parsePugixmlFb2_Tr(childNode);
         table.emplace_back(tr);
     }
+
+    parsePugixml_AttrCheckAllProcessed(node, "table", proceseedAttrs);
 
     return table;
 }
@@ -274,7 +313,10 @@ inline
 Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
 {
     Poem  poem;
-    parsePugixml_AttrsIdLang(poem, node);
+
+    std::unordered_set<std::string> proceseedAttrs;
+
+    parsePugixml_AttrsIdLang(poem, node, &proceseedAttrs);
 
     pugi::xml_node titleNode = node.child("title");
     if (titleNode)
@@ -312,6 +354,20 @@ Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
         poem.date = parsePugixmlFb2_DateRangeInfo(dateNode);
     }
 
+    std::unordered_set<std::string> processedTafs = { "title", "epigraph", "stanza", "text-author", "date" };
+    for(pugi::xml_node childNode=node.first_child(); childNode; childNode=childNode.next_sibling())
+    {
+        std::string childName = childNode.name();
+        if (processedTafs.find(childName)==processedTafs.end())
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: poem: found unknown tag: " + childName);
+            #endif
+        }
+    }
+
+    parsePugixml_AttrCheckAllProcessed(node, "poem", proceseedAttrs);
+
     return poem;
 
 }
@@ -330,7 +386,10 @@ inline
 CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
 {
     CiteEpigraph  ce;
-    parsePugixml_AttrsIdLang(ce, node);
+
+    std::unordered_set<std::string> proceseedAttrs;
+
+    parsePugixml_AttrsIdLang(ce, node, &proceseedAttrs);
     ce.blockType    = EBlockType::cite;
 
     for(pugi::xml_node childNode=node.first_child(); childNode; childNode=childNode.next_sibling())
@@ -390,8 +449,16 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
             TextAuthor textAuthor = parsePugixmlFb2_TextAuthor(authorNode);
             ce.textAuthors.emplace_back(textAuthor);
         }
+        else
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: cite: found unknown tag: " + childName);
+            #endif
+        }
 
     }
+
+    parsePugixml_AttrCheckAllProcessed(node, "cite", proceseedAttrs);
 
     return ce;
 
@@ -409,6 +476,10 @@ inline
 CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
 {
     CiteEpigraph  ce;
+
+    std::unordered_set<std::string> proceseedAttrs;
+    parsePugixml_AttrsId(ce, node, &pProceseedAttrs);
+
     parsePugixml_AttrsIdLang(ce, node);
     ce.blockType    = EBlockType::epigraph;
 
@@ -478,8 +549,16 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
             TextAuthor textAuthor = parsePugixmlFb2_TextAuthor(authorNode);
             ce.textAuthors.emplace_back(textAuthor);
         }
+        else
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: epigraph: found unknown tag: " + childName);
+            #endif
+        }
 
     }
+
+    parsePugixml_AttrCheckAllProcessed(node, "epigraph", proceseedAttrs);
 
     return ce;
 

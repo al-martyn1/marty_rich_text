@@ -16,6 +16,6 @@
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=Align                   -F=@Align.txt ^
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=VertAlign               -F=@VertAlign.txt ^
 %FLAGS_ENUM%  %UINT32% %FLAGS_SERIALIZE%       -E=TdThType                -F=@TdThType.txt ^
-%FLAGS_ENUM%  %UINT32%                         -E=EpigraphPoemCiteType    -F=@EpigraphPoemCiteType.txt ^
 ..\Enums.h
 
+rem %FLAGS_ENUM%  %UINT32%                         -E=EpigraphPoemCiteType    -F=@EpigraphPoemCiteType.txt 

@@ -58,7 +58,7 @@ DateInfo parsePugixmlFb2_DateInfo(pugi::xml_node& node)
 inline
 DateRangeInfo parsePugixmlFb2_DateRangeInfo(pugi::xml_node& node)
 {
-    DateInfo di = parsePugixmlFb2_DateInfo(pugi::xml_node& node)
+    DateInfo di = parsePugixmlFb2_DateInfo(node);
     DateRangeInfo dri;
     dri.date = di;
     return dri;

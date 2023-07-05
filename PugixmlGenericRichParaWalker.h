@@ -39,6 +39,12 @@ struct PugixmlGenericRichParaWalker : public marty_pugixml::tree_walker
     // <a l:href="#app1">приложении 1</a>.</p>
 
     // <image>
+    // Атрибуты
+    //   xlink:type (опциональный)
+    //   xlink:href - ссылка на собственно графические данные, обычно содержащиеся в элементе <binary>;
+    //   alt (опциональный);
+    //   title (опциональный, для inline недопустимый) - подпись к картинке;
+    //   id (опциональный, для inline недопустимый) - для ссылок на картинку.
     // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_image
     // <image l:href="#picture.jpg"/>
 
@@ -55,16 +61,17 @@ struct PugixmlGenericRichParaWalker : public marty_pugixml::tree_walker
 
 public:
 
-    Para                                              para;
+    Para                                                          para;
 
 
 protected:
 
-    TextAttributes                                    curTagAttributes;
-    std::vector<BasicStyleFlags>                                  styleFlagsStack  ; // opened tags
-    std::vector< std::unordered_map<std::string, VariantValue> >  styleValuesStack ; // opened tags
+    TextAttributes                                                curTagAttributes;
 
-    std::unordered_map<std::string, BasicStyleFlags>  tagFlagMap;
+    std::vector<BasicStyleFlags>                                  styleFlagsStack ; // opened tags
+    std::vector< std::unordered_map<std::string, VariantValue> >  styleValuesStack; // opened tags
+
+    std::unordered_map<std::string, BasicStyleFlags>              tagFlagMap;
 
 
 public:
@@ -220,6 +227,8 @@ protected:
         // curTagAttributes
         // Тут надо извлечь инфу из тэга style, image, a, font, color etc
         // И всунуть в curTagAttributes.values
+
+        //TODO: !!! Отпроцессить следующие тэги
 
         // Но пока ничего не делаем
         if ( tagFlag==BasicStyleFlags::link

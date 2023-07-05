@@ -81,6 +81,7 @@ namespace marty_rich_text {
 struct Block;
 struct Poem;
 struct CiteEpigraph; // Cite or Epigraph
+//struct Section;
 // struct Table;
 
 
@@ -163,6 +164,42 @@ struct CiteEpigraph
 
 }; // struct Cite
 
+
+// http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_section
+// section - Секция, основной структурный блок книги. Не содержит собственно текста.
+//   Subelements: Должен содержать последовательность элементов в таком порядке:
+//                1 <title> - 0..1 (опционально);
+//                2 <epigraph> - 0..n (любое число, опционально);
+//                3 <image> - 0..1 (опционально);
+//                4 <annotation> - 0..1 (опционально);
+//                5 Один из вариантов,
+//                  1 либо вложенные секции:
+//                    <section> - (любое число, обязательно);
+//                  2 либо произвольный набор (в произвольном количестве) из следующих элементов:
+//                    p, image, poem, subtitle, cite, empty-line, table
+//                      p, image, subtitle, empty-line - это всё разные виды p
+//                      poem, cite, table - это набор из Block, куда также входит и Para <p>
+//   Атрибуты
+//     id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
+//     xml:lang (опциональный) - язык.
+
+struct Section
+{
+    std::string                 id          ;
+    std::string                 lang        ;
+
+    Title                       title       ; //!< Заголовок, есть метод empty(), optional не нужен
+    std::vector<CiteEpigraph>   epigraphs   ; //!< Эпиграфы
+    Para                        image       ; //!< Строго Para с типом EParaType::image (или EParaType::emptyLine, пока разбор image не налажен)
+    std::vector<Block>          annotation  ; //!< p, subtitle, empty-line - Para; poem, cite, table - Block
+
+    std::vector<Block>          content     ; //!< В FB2 секция либо только с непосредственным содержимым, либо только с подсекциями, мы позволим и то и другое, при отображении непосредственное содержимое идёт до подсекций
+    std::vector<Section>        subsections ; //!< Подсекции/подразделы
+
+
+
+
+}; // struct Section
 
 
 

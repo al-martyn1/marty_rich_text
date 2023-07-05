@@ -97,6 +97,8 @@ struct Para
         return allAttrsHasFlags(BasicStyleFlags::pre);
     }
 
+    //TODO: !!! isImage - содержит только img/image и ничего больше. Также завести ещё одно значение EParaType для Image
+
 
     static
     Para emptyLine()
