@@ -7,10 +7,10 @@
 
 #include "marty_pugixml/marty_pugixml.h"
 
-#include <unordered_set>
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 
 namespace marty_rich_text {
 

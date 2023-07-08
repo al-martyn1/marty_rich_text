@@ -32,7 +32,7 @@ namespace marty_rich_text{
 */
 struct Para
 {
-    EParaType                      paraType = EParaType::normal; //!< Тип параграфа: normal, code, emptyLine 
+    EParaType                      paraType = EParaType::normal; //!< Тип параграфа: normal, code, emptyLine
     EAlign                         align    = EAlign::left     ; //!< Выравнивание, по умолчанию - по левому краю. Или - undefined?
 
     std::string                    id;    //!< (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
@@ -89,7 +89,7 @@ struct Para
 
         return true;
     }
-    
+
     bool isCode() const
     {
         return allAttrsHasFlags(BasicStyleFlags::code);

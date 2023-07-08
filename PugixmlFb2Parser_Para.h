@@ -3,8 +3,8 @@
 #include "Enums.h"
 #include "Para.h"
 #include "PugixmlGenericRichParaWalker.h"
-#include "utils.h"
 #include "parsePugixml_AttrsIdLangStyle.h"
+#include "utils.h"
 
 #include "marty_pugixml/marty_pugixml.h"
 
@@ -52,14 +52,14 @@ getFb2TagFlagsMap()
 // BasicStyleFlags getFb2TagFlag(const std::string &t)
 // {
 //     const std::unordered_map<std::string, BasicStyleFlags>& m = getFb2TagFlagsMap();
-//  
+//
 //     std::unordered_map<std::string, BasicStyleFlags>::const_iterator it = m.find(toLower(t));
-//  
+//
 //     if (it!=m.end())
 //     {
 //         return it->second;
 //     }
-//  
+//
 //     return BasicStyleFlags::blank;
 // }
 

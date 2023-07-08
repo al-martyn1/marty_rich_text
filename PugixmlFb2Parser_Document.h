@@ -3,22 +3,21 @@
 #include "CiteEpigraphPoemSection.h"
 #include "DocumentHeader.h"
 #include "Para.h"
+#include "PugixmlFb2Parser_DocumentHeader.h"
 #include "Stanza.h"
 #include "Table.h"
 #include "TdTh.h"
-#include "Tr.h"
 #include "Title.h"
+#include "Tr.h"
 #include "utils.h"
 
 #include "marty_pugixml/marty_pugixml.h"
-#include "PugixmlFb2Parser_DocumentHeader.h"
-
 
 #include <exception>
 #include <stdexcept>
 
 
-// Links - 
+// Links -
 // Add external xml subtree (e.g. given in string format) to existing xml tree - http://www.gerald-fahrnholz.eu/sw/DocGenerated/HowToUse/html/group___grp_pugi_xml.html
 
 // Pugixml manual - https://pugixml.org/docs/manual.html#access.nodedata
@@ -65,7 +64,7 @@ Title PugixmlFb2Parser::parseTitle(pugi::xml_node& node)
             t.paras.emplace_back(Para::emptyLine());
             continue;
         }
-        
+
         auto para = parsePara(pNode, &proceseedAttrs);
         if (!para.empty())
         {
@@ -138,10 +137,10 @@ Para PugixmlFb2Parser::parseStanzaV(pugi::xml_node& node)
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_stanza
 // Атрибуты
 // Нет атрибутов.
-//  
+//
 // Подчиненные элементы
 // Должен содержать последовательность элементов в таком порядке:
-//  
+//
 // <title> 0..1 (опционально);
 // <subtitle> 0..1 (опционально);
 // <v> 1..n (любое число, обязательно).
@@ -200,7 +199,7 @@ TdTh PugixmlFb2Parser::parseTdTh(pugi::xml_node& node, const std::string &tagNam
 
     // colspan (опциональный);
     tdth.colspan = (std::size_t)parsePugixml_AttrGetHelper(node, "colspan", &proceseedAttrs).as_uint(0); //  node.attribute("colspan").as_uint(0);
-    
+
     // rowspan (опциональный);
     tdth.rowspan = (std::size_t)parsePugixml_AttrGetHelper(node, "rowspan", &proceseedAttrs).as_uint(0); // node.attribute("rowspan").as_uint(0);
 
@@ -352,7 +351,7 @@ Poem PugixmlFb2Parser::parsePoem(pugi::xml_node& node)
         Stanza stanza = PugixmlFb2Parser::parseStanza(stanzaNode);
         poem.stanzas.emplace_back(stanza);
     }
-    
+
     for(pugi::xml_node authorNode=node.child("text-author"); authorNode; authorNode=authorNode.next_sibling("text-author"))
     {
         TextAuthor textAuthor = PugixmlFb2Parser::parseTextAuthor(authorNode);
@@ -558,7 +557,7 @@ CiteEpigraph PugixmlFb2Parser::parseEpigraph(pugi::xml_node& node)
         // else if (childName=="table")
         // {
         //     block.blockType = EBlockType::table;
-        //  
+        //
         //     Table table = PugixmlFb2Parser::parseTable(childNode);
         //     block.table.emplace_back(table);
         //     ce.blocks.emplace_back(block);

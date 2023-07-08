@@ -48,7 +48,7 @@ StreamType& operator<<(StreamType &oss, const ArtworkInfo &ai)
 
     oss << "Title: " << ai.title.makeFullTitle() << "\n";
 
-    bool 
+    bool
     bFirst = true;
     for(auto genre: ai.genres)
     {

@@ -86,14 +86,14 @@ protected:
     BasicStyleFlags getTagFlag(const std::string &t)
     {
         //const std::unordered_map<std::string, BasicStyleFlags>& m = getFb2TagFlagsMap();
-    
+
         std::unordered_map<std::string, BasicStyleFlags>::const_iterator it = tagFlagMap.find(toLower(t));
-    
+
         if (it!=tagFlagMap.end())
         {
             return it->second;
         }
-    
+
         return BasicStyleFlags::blank;
     }
 

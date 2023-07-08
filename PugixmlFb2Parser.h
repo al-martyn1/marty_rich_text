@@ -62,7 +62,7 @@ public:
 
 
 // Real meat goes here
-#if 0 
+#if 0
     Para parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs);
     Para parseSubtitle(pugi::xml_node& node);
     Para parseImage(pugi::xml_node& node);
@@ -93,9 +93,7 @@ public:
 
 } // namespace marty_rich_text
 
-#include "parsePugixml_AttrsIdLangStyle.h"
-#include "PugixmlFb2Parser_Para.h"
-#include "PugixmlFb2Parser_DocumentHeader.h"
 #include "PugixmlFb2Parser_Document.h"
-
-
+#include "PugixmlFb2Parser_DocumentHeader.h"
+#include "PugixmlFb2Parser_Para.h"
+#include "parsePugixml_AttrsIdLangStyle.h"

@@ -95,7 +95,7 @@ ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node& fb2DescriptionNod
     // ai.series      - В FB2 вроде нет аналога
     // Не совсем то - серия издательства - есть, нет авторской серии: series="Звездные войны", title="Империя наносит ответный удар"
     //   <sequence name="Великая поэзия (АСТ)"/>
-    // В заголовках обычно пишется в виде "Серия: Название" - "Звездные войны: Империя наносит ответный удар", 
+    // В заголовках обычно пишется в виде "Серия: Название" - "Звездные войны: Империя наносит ответный удар",
     // или "Звездные войны. Империя наносит ответный удар"
 
     // ai.subTitle    - В FB2 вроде нет аналога
@@ -106,7 +106,7 @@ ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node& fb2DescriptionNod
     // (Жизнь и похождения матроса Ивана Тельняшкина)
 
     ai.title.title = marty_pugixml::get_node_all_text(titleInfoNode.child("book-title"));
-    
+
     ai.lang  = marty_pugixml::get_node_all_text(titleInfoNode.child("lang"));
 
     // ai.dateStart - в FB2 вроде нет аналога
