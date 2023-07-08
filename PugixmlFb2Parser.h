@@ -63,6 +63,7 @@ public:
 
 // Real meat goes here
 #if 0 
+    Para parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs);
     Para parseSubtitle(pugi::xml_node& node);
     Para parseImage(pugi::xml_node& node);
     Para parseTextAuthor(pugi::xml_node& node);
