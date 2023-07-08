@@ -9,6 +9,7 @@
 #include "TdTh.h"
 #include "Title.h"
 #include "Tr.h"
+#include "parsePugixml_AttrsIdLangStyle.h"
 #include "utils.h"
 
 #include "marty_pugixml/marty_pugixml.h"
