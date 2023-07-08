@@ -190,14 +190,13 @@ struct Section
 
     Title                       title       ; //!< Заголовок, есть метод empty(), optional не нужен
     std::vector<CiteEpigraph>   epigraphs   ; //!< Эпиграфы
-    Para                        image       ; //!< Строго Para с типом EParaType::image (или EParaType::emptyLine, пока разбор image не налажен)
+    // Image также есть в content
+    // Para                        image       ; //!< Строго Para с типом EParaType::image (или EParaType::emptyLine, пока разбор image не налажен)
     std::vector<Block>          annotation  ; //!< p, subtitle, empty-line - Para; poem, cite, table - Block
 
-    std::vector<Block>          content     ; //!< В FB2 секция либо только с непосредственным содержимым, либо только с подсекциями, мы позволим и то и другое, при отображении непосредственное содержимое идёт до подсекций
+    std::vector<Block>          content     ; //!< В FB2 секция либо только с непосредственным содержимым, либо только с подсекциями
+                                              //!< Мы позволим и то и другое, при отображении непосредственное содержимое идёт до подсекций
     std::vector<Section>        subsections ; //!< Подсекции/подразделы
-
-
-
 
 }; // struct Section
 

@@ -2,6 +2,7 @@
 
 #include "CiteEpigraphPoemSection.h"
 #include "DocumentHeader.h"
+#include "Para.h"
 #include "Stanza.h"
 #include "Table.h"
 #include "TdTh.h"
@@ -10,7 +11,7 @@
 #include "utils.h"
 
 #include "marty_pugixml/marty_pugixml.h"
-#include "parsePugixmlFb2_DocumentHeader.h"
+#include "PugixmlFb2Parser_DocumentHeader.h"
 
 
 #include <exception>
@@ -42,9 +43,11 @@ namespace marty_rich_text {
 
 //----------------------------------------------------------------------------
 inline
-Title parsePugixmlFb2_Title(pugi::xml_node& node)
+Title PugixmlFb2Parser::parseTitle(pugi::xml_node& node)
 {
     Title t;
+
+    std::unordered_set<std::string> proceseedAttrs;
 
     for(pugi::xml_node pNode=node.first_child(); pNode; pNode=pNode.next_sibling())
     {
@@ -59,11 +62,11 @@ Title parsePugixmlFb2_Title(pugi::xml_node& node)
 
         if (pNodeName=="empty-line")
         {
-            t.paras.emplace_back(Pata::emptyLine());
+            t.paras.emplace_back(Para::emptyLine());
             continue;
         }
         
-        auto para = marty_rich_text::parsePugixmlFb2_Para(pNode);
+        auto para = parsePara(pNode, &proceseedAttrs);
         if (!para.empty())
         {
             para.paraType = EParaType::normal;
@@ -76,44 +79,58 @@ Title parsePugixmlFb2_Title(pugi::xml_node& node)
         t.paras.emplace_back(para);
     }
 
+    parsePugixml_AttrCheckAllProcessed(node, "title", proceseedAttrs);
+
     return t;
 }
 
 //----------------------------------------------------------------------------
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_subtitle
 inline
-Para parsePugixmlFb2_Subtitle(pugi::xml_node& node)
+Para PugixmlFb2Parser::parseSubtitle(pugi::xml_node& node)
 {
-    Para p     = parsePugixmlFb2_Para(node);
+    std::unordered_set<std::string> proceseedAttrs;
+    Para p     = parsePara(node, &proceseedAttrs);
     p.paraType = EParaType::subtitle;
+    parsePugixml_AttrCheckAllProcessed(node, "subtitle", proceseedAttrs);
     return p;
 }
 
 //----------------------------------------------------------------------------
 //TODO: !!! Пока изображение представляем, как пустой параграф, но надо доделать
 inline
-Para parsePugixmlFb2_Image(pugi::xml_node& node)
+Para PugixmlFb2Parser::parseImage(pugi::xml_node& node)
 {
-    return Pata::emptyLine()
+    return Para::emptyLine();
 }
 
 //----------------------------------------------------------------------------
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_text-author
 inline
-Para parsePugixmlFb2_TextAuthor(pugi::xml_node& node)
+Para PugixmlFb2Parser::parseTextAuthor(pugi::xml_node& node)
 {
-    Para p     = parsePugixmlFb2_Para(node);
+    std::unordered_set<std::string> proceseedAttrs;
+
+    Para p     = PugixmlFb2Parser::parsePara(node, &proceseedAttrs);
     p.paraType = EParaType::textAuthor;
+
+    parsePugixml_AttrCheckAllProcessed(node, "tr", proceseedAttrs);
+
     return p;
 }
 
 //----------------------------------------------------------------------------
 // http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_v
 inline
-Para parsePugixmlFb2_StanzaV(pugi::xml_node& node)
+Para PugixmlFb2Parser::parseStanzaV(pugi::xml_node& node)
 {
-    Para p     = parsePugixmlFb2_Para(node);
+    std::unordered_set<std::string> proceseedAttrs;
+
+    Para p     = PugixmlFb2Parser::parsePara(node, &proceseedAttrs);
     p.paraType = EParaType::stanzaV;
+
+    parsePugixml_AttrCheckAllProcessed(node, "v", proceseedAttrs);
+
     return p;
 }
 
@@ -129,33 +146,33 @@ Para parsePugixmlFb2_StanzaV(pugi::xml_node& node)
 // <subtitle> 0..1 (опционально);
 // <v> 1..n (любое число, обязательно).
 inline
-Stanza parsePugixmlFb2_Stanza(pugi::xml_node& node)
+Stanza PugixmlFb2Parser::parseStanza(pugi::xml_node& node)
 {
     Stanza s;
 
     pugi::xml_node titleNode = node.child("title");
     if (titleNode)
     {
-        s.title = parsePugixmlFb2_Title(titleNode);
+        s.title = PugixmlFb2Parser::parseTitle(titleNode);
     }
 
     pugi::xml_node subtitleNode = node.child("subtitle");
     if (subtitleNode)
     {
-        s.subtitle = parsePugixmlFb2_Subtitle(subtitleNode);
+        s.subtitle = PugixmlFb2Parser::parseSubtitle(subtitleNode);
     }
 
     for(pugi::xml_node vNode=node.first_child(); vNode; vNode=vNode.next_sibling())
     {
         std::string vNodeName = vNode.name();
-        if (pNodeName!="v")
+        if (vNodeName!="v")
         {
             #if defined(DEBUG) || defined(_DEBUG)
                 throw std::runtime_error( "Processing FB2 tag: stanza: found unknown tag: " + vNodeName);
             #endif
             continue;
         }
-        auto v = parsePugixmlFb2_StanzaV(vNode);
+        auto v = PugixmlFb2Parser::parseStanzaV(vNode);
         s.lines.emplace_back();
     }
 
@@ -164,7 +181,7 @@ Stanza parsePugixmlFb2_Stanza(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node, const std::string &tagName)
+TdTh PugixmlFb2Parser::parseTdTh(pugi::xml_node& node, const std::string &tagName)
 {
     TdTh tdth;
 
@@ -185,10 +202,10 @@ TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node, const std::string &tagName)
     tdth.colspan = (std::size_t)parsePugixml_AttrGetHelper(node, "colspan", &proceseedAttrs).as_uint(0); //  node.attribute("colspan").as_uint(0);
     
     // rowspan (опциональный);
-    tdth.rowspan = (std::size_t)parsePugixml_AttrGetHelper(node, "rowspan", &proceseedAttrs).as_uint(0) // node.attribute("rowspan").as_uint(0);
+    tdth.rowspan = (std::size_t)parsePugixml_AttrGetHelper(node, "rowspan", &proceseedAttrs).as_uint(0); // node.attribute("rowspan").as_uint(0);
 
 
-    Para p = parsePugixmlFb2_Para(node, &proceseedAttrs);
+    Para p = parsePara(node, &proceseedAttrs);
     if (!p.empty())
     {
         p.align = tdth.align;
@@ -212,7 +229,7 @@ TdTh parsePugixmlFb2_TdTh(pugi::xml_node& node, const std::string &tagName)
 
 // Не совсем понятно, что значит тут выравнивание. Задание выравнивания для всех дочерних ячеек?
 inline
-Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
+Tr PugixmlFb2Parser::parseTr(pugi::xml_node& node)
 {
     Tr tr;
 
@@ -239,7 +256,7 @@ Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
             #endif
             continue;
         }
-        TdTh tdth     = parsePugixmlFb2_TdTh(tdthNode, tdthName);
+        TdTh tdth     = PugixmlFb2Parser::parseTdTh(tdthNode, tdthName);
         tdth.tdthType = tdThType;
 
         if (align!=EAlign::undefined)
@@ -265,7 +282,7 @@ Tr parsePugixmlFb2_Tr(pugi::xml_node& node)
 //     Должен содержать элементы:
 //     <tr> 1..n (любое число, один обязательно).
 inline
-Table parsePugixmlFb2_Table(pugi::xml_node& node)
+Table PugixmlFb2Parser::parseTable(pugi::xml_node& node)
 {
     Table table;
     std::unordered_set<std::string> proceseedAttrs;
@@ -282,20 +299,14 @@ Table parsePugixmlFb2_Table(pugi::xml_node& node)
             continue;
         }
 
-        Tr tr = parsePugixmlFb2_Tr(childNode);
-        table.emplace_back(tr);
+        Tr tr = PugixmlFb2Parser::parseTr(childNode);
+        table.rows.emplace_back(tr);
     }
 
     parsePugixml_AttrCheckAllProcessed(node, "table", proceseedAttrs);
 
     return table;
 }
-
-//----------------------------------------------------------------------------
-Poem parsePugixmlFb2_Poem(pugi::xml_node& node);
-CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node);
-CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node);
-// Table parsePugixmlFb2_(pugi::xml_node& node);
 
 //----------------------------------------------------------------------------
 // poem
@@ -310,7 +321,7 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node);
 //   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
 //   xml:lang (опциональный) - язык.
 inline
-Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
+Poem PugixmlFb2Parser::parsePoem(pugi::xml_node& node)
 {
     Poem  poem;
 
@@ -321,12 +332,12 @@ Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
     pugi::xml_node titleNode = node.child("title");
     if (titleNode)
     {
-        poem.title = parsePugixmlFb2_Title(titleNode);
+        poem.title = PugixmlFb2Parser::parseTitle(titleNode);
     }
 
     for(pugi::xml_node epNode=node.child("epigraph"); epNode; epNode=epNode.next_sibling("epigraph"))
     {
-        CiteEpigraph epigraph = parsePugixmlFb2_Epigraph(epNode);
+        CiteEpigraph epigraph = PugixmlFb2Parser::parseEpigraph(epNode);
         epigraph.blockType    = EBlockType::epigraph; // EBlockType::cite
 
         Block block;
@@ -338,20 +349,20 @@ Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
 
     for(pugi::xml_node stanzaNode=node.child("stanza"); stanzaNode; stanzaNode=stanzaNode.next_sibling("stanza"))
     {
-        Stanza stanza = parsePugixmlFb2_Stanza(stanzaNode);
+        Stanza stanza = PugixmlFb2Parser::parseStanza(stanzaNode);
         poem.stanzas.emplace_back(stanza);
     }
     
     for(pugi::xml_node authorNode=node.child("text-author"); authorNode; authorNode=authorNode.next_sibling("text-author"))
     {
-        TextAuthor textAuthor = parsePugixmlFb2_TextAuthor(authorNode);
+        TextAuthor textAuthor = PugixmlFb2Parser::parseTextAuthor(authorNode);
         poem.textAuthors.emplace_back(textAuthor);
     }
 
     pugi::xml_node dateNode = node.child("date");
     if (dateNode)
     {
-        poem.date = parsePugixmlFb2_DateRangeInfo(dateNode);
+        poem.date = PugixmlFb2Parser::parseDateRangeInfo(dateNode);
     }
 
     std::unordered_set<std::string> processedTafs = { "title", "epigraph", "stanza", "text-author", "date" };
@@ -383,7 +394,7 @@ Poem parsePugixmlFb2_Poem(pugi::xml_node& node)
 //   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
 //   xml:lang (опциональный) - язык.
 inline
-CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
+CiteEpigraph PugixmlFb2Parser::parseCite(pugi::xml_node& node)
 {
     CiteEpigraph  ce;
 
@@ -400,8 +411,10 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
 
         if (childName=="p" || childName=="subtitle" || childName=="empty-line")
         {
+            std::unordered_set<std::string> proceseedAttrs;
+
             block.blockType = EBlockType::para;
-            auto para = marty_rich_text::parsePugixmlFb2_Para(childNode);
+            auto para = parsePara(childNode, &proceseedAttrs);
 
             if (childName=="subtitle")
             {
@@ -409,7 +422,7 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
             }
             else if (childName=="empty-line")
             {
-                para = Pata::emptyLine();
+                para = Para::emptyLine();
             }
             else
             {
@@ -423,6 +436,8 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
                 }
             }
 
+            parsePugixml_AttrCheckAllProcessed(childNode, childName, proceseedAttrs);
+
             block.para.emplace_back(para);
             ce.blocks.emplace_back(block);
 
@@ -431,7 +446,7 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
         {
             block.blockType = EBlockType::poem;
 
-            Poem poem = parsePugixmlFb2_Poem(childNode);
+            Poem poem = PugixmlFb2Parser::parsePoem(childNode);
             block.poem.emplace_back(poem);
             ce.blocks.emplace_back(block);
 
@@ -440,13 +455,13 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
         {
             block.blockType = EBlockType::table;
 
-            Table table = parsePugixmlFb2_Table(childNode);
+            Table table = PugixmlFb2Parser::parseTable(childNode);
             block.table.emplace_back(table);
             ce.blocks.emplace_back(block);
         }
         else if (childName=="text-author")
         {
-            TextAuthor textAuthor = parsePugixmlFb2_TextAuthor(authorNode);
+            TextAuthor textAuthor = parseTextAuthor(childNode);
             ce.textAuthors.emplace_back(textAuthor);
         }
         else
@@ -473,14 +488,13 @@ CiteEpigraph parsePugixmlFb2_Cite(pugi::xml_node& node)
 //   Атрибуты
 //   id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
 inline
-CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
+CiteEpigraph PugixmlFb2Parser::parseEpigraph(pugi::xml_node& node)
 {
     CiteEpigraph  ce;
 
     std::unordered_set<std::string> proceseedAttrs;
-    parsePugixml_AttrsId(ce, node, &pProceseedAttrs);
+    parsePugixml_AttrsId(ce, node, &proceseedAttrs);
 
-    parsePugixml_AttrsIdLang(ce, node);
     ce.blockType    = EBlockType::epigraph;
 
     for(pugi::xml_node childNode=node.first_child(); childNode; childNode=childNode.next_sibling())
@@ -492,7 +506,10 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
         if (childName=="p" ||  /* childName=="subtitle" || */  childName=="empty-line")
         {
             block.blockType = EBlockType::para;
-            auto para = marty_rich_text::parsePugixmlFb2_Para(childNode);
+
+            std::unordered_set<std::string> proceseedAttrs;
+
+            auto para = marty_rich_text::PugixmlFb2Parser::parsePara(childNode, &proceseedAttrs);
 
              /* if (childName=="subtitle")
             {
@@ -500,7 +517,7 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
             }
             else */  if (childName=="empty-line")
             {
-                para = Pata::emptyLine();
+                para = Para::emptyLine();
             }
             else
             {
@@ -514,6 +531,8 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
                 }
             }
 
+            parsePugixml_AttrCheckAllProcessed(childNode, "title", proceseedAttrs);
+
             block.para.emplace_back(para);
             ce.blocks.emplace_back(block);
 
@@ -522,7 +541,7 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
         {
             block.blockType = EBlockType::poem;
 
-            Poem poem = parsePugixmlFb2_Poem(childNode);
+            Poem poem = PugixmlFb2Parser::parsePoem(childNode);
             block.poem.emplace_back(poem);
             ce.blocks.emplace_back(block);
 
@@ -531,7 +550,7 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
         {
             block.blockType = EBlockType::cite;
 
-            CiteEpigraph cite = parsePugixmlFb2_Cite(node);
+            CiteEpigraph cite = PugixmlFb2Parser::parseCite(childNode);
             block.citeEpigraph.emplace_back(cite);
             ce.blocks.emplace_back(block);
 
@@ -540,13 +559,13 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
         // {
         //     block.blockType = EBlockType::table;
         //  
-        //     Table table = parsePugixmlFb2_Table(childNode);
+        //     Table table = PugixmlFb2Parser::parseTable(childNode);
         //     block.table.emplace_back(table);
         //     ce.blocks.emplace_back(block);
         // }
         else if (childName=="text-author")
         {
-            TextAuthor textAuthor = parsePugixmlFb2_TextAuthor(authorNode);
+            TextAuthor textAuthor = parseTextAuthor(childNode);
             ce.textAuthors.emplace_back(textAuthor);
         }
         else
@@ -564,6 +583,129 @@ CiteEpigraph parsePugixmlFb2_Epigraph(pugi::xml_node& node)
 
 }
 
+//----------------------------------------------------------------------------
+// http://www.fictionbook.org/index.php/%D0%AD%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82_section
+// section - Секция, основной структурный блок книги. Не содержит собственно текста.
+//   Subelements: Должен содержать последовательность элементов в таком порядке:
+//                1 <title> - 0..1 (опционально);
+//                2 <epigraph> - 0..n (любое число, опционально);
+//                3 <image> - 0..1 (опционально);
+//                4 <annotation> - 0..1 (опционально);
+//                5 Один из вариантов,
+//                  1 либо вложенные секции:
+//                    <section> - (любое число, обязательно);
+//                  2 либо произвольный набор (в произвольном количестве) из следующих элементов:
+//                    p, image, poem, subtitle, cite, empty-line, table
+//                      p, image, subtitle, empty-line - это всё разные виды p
+//                      poem, cite, table - это набор из Block, куда также входит и Para <p>
+//   Атрибуты
+//     id (опциональный) - Идентификатор (якорь, метка) для ссылок на данный элемент
+//     xml:lang (опциональный) - язык.
+
+inline
+Section PugixmlFb2Parser::parseSection(pugi::xml_node& node)
+{
+    Section sec;
+
+    std::unordered_set<std::string> proceseedAttrs;
+    parsePugixml_AttrsIdLang(sec, node, &proceseedAttrs);
+
+    // Хотя FB2 деклрарирует определенный порядок тэгов, нам-то в принципе похуй
+    // Единственное - все теги, кроме section, будут отображаться до вложенных секций,
+    // даже если они встретятся после вложенных секций.
+    // Но такая ситуация маловероятна, FB2 такой микс не позволяет.
+    for(pugi::xml_node childNode=node.first_child(); childNode; childNode=childNode.next_sibling())
+    {
+        std::string childName = childNode.name();
+
+        if (childName=="title")
+        {
+            sec.title = PugixmlFb2Parser::parseTitle(childNode);
+        }
+        else if (childName=="epigraph")
+        {
+            sec.epigraphs.emplace_back(PugixmlFb2Parser::parseEpigraph(childNode));
+        }
+        else if (childName=="annotation")
+        {
+            //TODO: !!!
+            // std::vector<Block>          annotation
+        }
+
+
+        else if (childName=="section")
+        {
+            sec.subsections.emplace_back(PugixmlFb2Parser::parseSection(childNode));
+        }
+
+
+        else if (childName=="image")
+        {
+            Block block;
+            block.blockType = EBlockType::para;
+            block.para.emplace_back(PugixmlFb2Parser::parseImage(childNode));
+            sec.content.emplace_back(block);
+            // image = PugixmlFb2Parser::parseImage(childNode);
+        }
+        else if (childName=="p")
+        {
+            Block block;
+            block.blockType = EBlockType::para;
+            std::unordered_set<std::string> proceseedAttrs;
+            Para p = parsePara(childNode, &proceseedAttrs);
+            parsePugixml_AttrCheckAllProcessed(childNode, "p", proceseedAttrs);
+            block.para.emplace_back(p);
+            sec.content.emplace_back(block);
+        }
+        else if (childName=="subtitle")
+        {
+            Block block;
+            block.blockType = EBlockType::para;
+            block.para.emplace_back(PugixmlFb2Parser::parseSubtitle(childNode));
+            sec.content.emplace_back(block);
+        }
+        else if (childName=="empty-line")
+        {
+            Block block;
+            block.blockType = EBlockType::para;
+            block.para.emplace_back(Para::emptyLine());
+            sec.content.emplace_back(block);
+        }
+        else if (childName=="poem")
+        {
+            Block block;
+            block.blockType = EBlockType::poem;
+            block.poem.emplace_back(PugixmlFb2Parser::parsePoem(childNode));
+            sec.content.emplace_back(block);
+        }
+        else if (childName=="cite")
+        {
+            Block block;
+            block.blockType = EBlockType::cite;
+            block.citeEpigraph.emplace_back(PugixmlFb2Parser::parseCite(childNode));
+            sec.content.emplace_back(block);
+        }
+        else if (childName=="table")
+        {
+            Block block;
+            block.blockType = EBlockType::table;
+            block.table.emplace_back(PugixmlFb2Parser::parseTable(childNode));
+            sec.content.emplace_back(block);
+        }
+        else
+        {
+            #if defined(DEBUG) || defined(_DEBUG)
+                throw std::runtime_error( "Processing FB2 tag: section: found unknown tag: " + childName);
+            #endif
+        }
+
+    }
+
+    parsePugixml_AttrCheckAllProcessed(node, "epigraph", proceseedAttrs);
+
+    return sec;
+
+}
 
 
         // for (pugi::xml_attribute attr = node.first_attribute(); attr; attr = attr.next_attribute())

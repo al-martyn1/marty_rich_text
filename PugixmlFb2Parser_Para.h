@@ -76,7 +76,7 @@ struct Fb2ParaWalker : public PugixmlGenericRichParaWalker // marty_pugixml::tre
 
 
 inline
-Para parsePugixmlFb2_Para(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs)
+Para PugixmlFb2Parser::parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs)
 {
     Fb2ParaWalker walker;
     marty_pugixml::traverse_node(node, walker);

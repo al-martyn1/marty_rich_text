@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <exception>
 #include <stdexcept>
+#include <string>
 
 namespace marty_rich_text {
 
@@ -22,14 +23,14 @@ void parsePugixml_AttrCheckAllProcessed(pugi::xml_node& node, const std::string 
         std::string attrName = attr.name();
         if (proceseedAttrs.find(attrName)==proceseedAttrs.end())
         {
-            throw std::runtime_exception("FB2: tag: " + tag + ": not processed attribute: " + attrName);
+            throw std::runtime_error("FB2: tag: " + tag + ": not processed attribute: " + attrName);
         }
         // std::cout << " " << attr.name() << "=" << attr.value();
     }
 }
 
 inline
-xml_attribute parsePugixml_AttrGetHelper(pugi::xml_node& node, const char* attrName, std::unordered_set<std::string> *pProceseedAttrs)
+pugi::xml_attribute parsePugixml_AttrGetHelper(pugi::xml_node& node, const char* attrName, std::unordered_set<std::string> *pProceseedAttrs)
 {
     if (pProceseedAttrs)
     {
@@ -42,11 +43,11 @@ xml_attribute parsePugixml_AttrGetHelper(pugi::xml_node& node, const char* attrN
 inline
 std::string parsePugixml_AttrGetStrHelper(pugi::xml_node& node, const char* attrName, std::unordered_set<std::string> *pProceseedAttrs)
 {
-    return parsePugixml_AttrGetHelper(nodem attrName, pProceseedAttrs).value();
+    return parsePugixml_AttrGetHelper(node, attrName, pProceseedAttrs).value();
 }
 
 template<typename ElementType> inline
-void parsePugixml_AttrsIdLangStyle(ElementType &el, std::unordered_set<std::string> *pProceseedAttrs=0)
+void parsePugixml_AttrsIdLangStyle(ElementType &el, pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs=0)
 {
     el.id    = parsePugixml_AttrGetStrHelper(node, "id", pProceseedAttrs);
     el.lang  = parsePugixml_AttrGetStrHelper(node, "lang", pProceseedAttrs);

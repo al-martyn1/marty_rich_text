@@ -16,7 +16,7 @@ namespace marty_rich_text {
 
 //----------------------------------------------------------------------------
 inline
-AuthorInfo parsePugixmlFb2_AuthorInfo(pugi::xml_node& node)
+AuthorInfo PugixmlFb2Parser::parseAuthorInfo(pugi::xml_node& node)
 {
     AuthorInfo ai;
 
@@ -37,14 +37,14 @@ AuthorInfo parsePugixmlFb2_AuthorInfo(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-TranslaterInfo parsePugixmlFb2_TranslaterInfo(pugi::xml_node& node)
+TranslaterInfo PugixmlFb2Parser::parseTranslaterInfo(pugi::xml_node& node)
 {
-    return parsePugixmlFb2_AuthorInfo(node);
+    return PugixmlFb2Parser::parseAuthorInfo(node);
 }
 
 //----------------------------------------------------------------------------
 inline
-DateInfo parsePugixmlFb2_DateInfo(pugi::xml_node& node)
+DateInfo PugixmlFb2Parser::parseDateInfo(pugi::xml_node& node)
 {
     DateInfo di;
 
@@ -56,9 +56,9 @@ DateInfo parsePugixmlFb2_DateInfo(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-DateRangeInfo parsePugixmlFb2_DateRangeInfo(pugi::xml_node& node)
+DateRangeInfo PugixmlFb2Parser::parseDateRangeInfo(pugi::xml_node& node)
 {
-    DateInfo di = parsePugixmlFb2_DateInfo(node);
+    DateInfo di = PugixmlFb2Parser::parseDateInfo(node);
     DateRangeInfo dri;
     dri.date = di;
     return dri;
@@ -67,7 +67,7 @@ DateRangeInfo parsePugixmlFb2_DateRangeInfo(pugi::xml_node& node)
 //----------------------------------------------------------------------------
 //! ArtworkInfo извлекается из тэга FictionBook/description/title-info. Тут на входе мы ожидаем description узел, так как наши представления об иерархии данных отличаются от дизайнеров FB2.
 inline
-ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
+ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node& fb2DescriptionNode)
 {
     ArtworkInfo ai;
 
@@ -83,7 +83,7 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
     // multiple authors
     for(pugi::xml_node authorNode=titleInfoNode.child("author"); authorNode; authorNode=authorNode.next_sibling("author"))
     {
-        AuthorInfo authorInfo = parsePugixmlFb2_AuthorInfo(authorNode);
+        AuthorInfo authorInfo = PugixmlFb2Parser::parseAuthorInfo(authorNode);
         if (authorInfo.empty())
         {
             continue;
@@ -110,7 +110,7 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
     ai.lang  = marty_pugixml::get_node_all_text(titleInfoNode.child("lang"));
 
     // ai.dateStart - в FB2 вроде нет аналога
-    ai.date.date  = parsePugixmlFb2_DateInfo(titleInfoNode.child("date")); // дата окончания создания произведения/дата выпуска релиза-принта, и тп
+    ai.date.date  = PugixmlFb2Parser::parseDateInfo(titleInfoNode.child("date")); // дата окончания создания произведения/дата выпуска релиза-принта, и тп
 
 
     // std::vector<Para>             annotation ; // Пока так, не читаем, возможно, поменяется
@@ -123,7 +123,7 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
     // multiple translaters
     for(pugi::xml_node translatorNode=titleInfoNode.child("translator"); translatorNode; translatorNode=translatorNode.next_sibling("translator"))
     {
-        TranslaterInfo translaterInfo = parsePugixmlFb2_TranslaterInfo(translatorNode);
+        TranslaterInfo translaterInfo = PugixmlFb2Parser::parseTranslaterInfo(translatorNode);
         if (translaterInfo.empty())
         {
             continue;
@@ -140,7 +140,7 @@ ArtworkInfo parsePugixmlFb2_ArtworkInfo(pugi::xml_node& fb2DescriptionNode)
 //----------------------------------------------------------------------------
 //! DocumentInfo извлекается из тэга FictionBook/description/document-info. Тут на входе мы ожидаем description узел, так как наши представления об иерархии данных отличаются от дизайнеров FB2.
 inline
-DocumentInfo parsePugixmlFb2_DocumentInfo(pugi::xml_node& fb2DescriptionNode)
+DocumentInfo PugixmlFb2Parser::parseDocumentInfo(pugi::xml_node& fb2DescriptionNode)
 {
     DocumentInfo di;
 
@@ -191,7 +191,7 @@ DocumentInfo parsePugixmlFb2_DocumentInfo(pugi::xml_node& fb2DescriptionNode)
 
 //----------------------------------------------------------------------------
 inline
-PublishingInfo parsePugixmlFb2_PublishingInfo(pugi::xml_node& fb2DescriptionNode)
+PublishingInfo PugixmlFb2Parser::parsePublishingInfo(pugi::xml_node& fb2DescriptionNode)
 {
     PublishingInfo pi;
 
@@ -211,13 +211,13 @@ PublishingInfo parsePugixmlFb2_PublishingInfo(pugi::xml_node& fb2DescriptionNode
 
 //----------------------------------------------------------------------------
 inline
-DocumentHeader parsePugixmlFb2_DocumentHeader(pugi::xml_node& fb2DescriptionNode)
+DocumentHeader PugixmlFb2Parser::parseDocumentHeader(pugi::xml_node& fb2DescriptionNode)
 {
     DocumentHeader dh;
 
-    dh.artworkInfo    = parsePugixmlFb2_ArtworkInfo(fb2DescriptionNode);
-    dh.documentInfo   = parsePugixmlFb2_DocumentInfo(fb2DescriptionNode);
-    dh.publishingInfo = parsePugixmlFb2_PublishingInfo(fb2DescriptionNode);
+    dh.artworkInfo    = parseArtworkInfo(fb2DescriptionNode);
+    dh.documentInfo   = parseDocumentInfo(fb2DescriptionNode);
+    dh.publishingInfo = parsePublishingInfo(fb2DescriptionNode);
 
     return dh;
 }

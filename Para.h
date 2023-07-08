@@ -42,6 +42,14 @@ struct Para
     std::string                    text ; //!< Текст параграфа
     std::vector<TextAttributes>    attrs; //!< Атрибуты параграфа
 
+    static
+    Para emptyLine()
+    {
+        Para p;
+        p.paraType = EParaType::emptyLine;
+        return p;
+    }
+
     bool empty() const
     {
         if (text.empty() && attrs.empty())
@@ -99,14 +107,6 @@ struct Para
 
     //TODO: !!! isImage - содержит только img/image и ничего больше. Также завести ещё одно значение EParaType для Image
 
-
-    static
-    Para emptyLine()
-    {
-        Para p;
-        p.paraType = EParaType::emptyLine;
-        return p;
-    }
 
     // Тут надо что-то сделать, проверки, чтобы атрибуты не перекрывались, может, что-то ещё
     // Или - пофиг? Поверим на слово

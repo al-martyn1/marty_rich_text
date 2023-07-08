@@ -1,0 +1,73 @@
+#pragma once
+
+#include "ArtworkInfo.h"
+#include "AuthorInfo.h"
+#include "CiteEpigraphPoemSection.h"
+#include "DateInfo.h"
+#include "DocumentHeader.h"
+#include "DocumentInfo.h"
+#include "Enums.h"
+#include "Para.h"
+#include "PublishingInfo.h"
+#include "Stanza.h"
+#include "Table.h"
+#include "TdTh.h"
+#include "TextAttributes.h"
+#include "TextAuthor.h"
+#include "TextFragment.h"
+#include "Title.h"
+#include "TitleInfo.h"
+#include "Tr.h"
+#include "TranslaterInfo.h"
+#include "VariantValue.h"
+
+#include <unordered_set>
+
+
+
+namespace marty_rich_text {
+
+
+class PugixmlFb2Parser
+{
+
+public:
+
+    Para             parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs);
+
+    Para             parseSubtitle(pugi::xml_node& node);
+    Para             parseImage(pugi::xml_node& node);
+    Para             parseTextAuthor(pugi::xml_node& node);
+    Para             parseStanzaV(pugi::xml_node& node);
+
+    ArtworkInfo      parseArtworkInfo(pugi::xml_node& fb2DescriptionNode);
+    AuthorInfo       parseAuthorInfo(pugi::xml_node& node);
+    TranslaterInfo   parseTranslaterInfo(pugi::xml_node& node);
+    DateInfo         parseDateInfo(pugi::xml_node& node);
+    DateRangeInfo    parseDateRangeInfo(pugi::xml_node& node);
+    DocumentInfo     parseDocumentInfo(pugi::xml_node& fb2DescriptionNode);
+    PublishingInfo   parsePublishingInfo(pugi::xml_node& fb2DescriptionNode);
+    DocumentHeader   parseDocumentHeader(pugi::xml_node& fb2DescriptionNode);
+    Title            parseTitle(pugi::xml_node& node);
+    Stanza           parseStanza(pugi::xml_node& node);
+    TdTh             parseTdTh(pugi::xml_node& node, const std::string &tagName);
+    Tr               parseTr(pugi::xml_node& node);
+    Table            parseTable(pugi::xml_node& node);
+    Poem             parsePoem(pugi::xml_node& node);
+    CiteEpigraph     parseCite(pugi::xml_node& node);
+    CiteEpigraph     parseEpigraph(pugi::xml_node& node);
+    Section          parseSection(pugi::xml_node& node);
+
+
+}; // class PugixmlFb2Parser
+
+
+
+} // namespace marty_rich_text
+
+#include "parsePugixml_AttrsIdLangStyle.h"
+#include "PugixmlFb2Parser_Para.h"
+#include "PugixmlFb2Parser_DocumentHeader.h"
+#include "PugixmlFb2Parser_Document.h"
+
+
