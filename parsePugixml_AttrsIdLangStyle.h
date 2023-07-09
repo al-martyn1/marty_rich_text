@@ -23,7 +23,8 @@ void parsePugixml_AttrCheckAllProcessed(pugi::xml_node& node, const std::string 
         std::string attrName = attr.name();
         if (proceseedAttrs.find(attrName)==proceseedAttrs.end())
         {
-            throw std::runtime_error("FB2: tag: " + tag + ": not processed attribute: " + attrName);
+            std::string attrVal = attr.value();
+            throw std::runtime_error("FB2: tag: " + tag + ": not processed attribute: " + attrName + ", attr value: " + attrVal);
         }
         // std::cout << " " << attr.name() << "=" << attr.value();
     }

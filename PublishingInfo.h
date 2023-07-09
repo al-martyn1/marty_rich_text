@@ -20,6 +20,11 @@ struct PublishingInfo
     std::string                   city       ;
     std::string                   isbn       ;
 
+    bool empty() const
+    {
+        return title.empty() && publisher.empty() && year.empty() && city.empty() && isbn.empty();
+    }
+
 };
 
 

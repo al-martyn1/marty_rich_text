@@ -4,6 +4,7 @@
 #include "AuthorInfo.h"
 #include "CiteEpigraphPoemSection.h"
 #include "DateInfo.h"
+#include "Document.h"
 #include "DocumentHeader.h"
 #include "DocumentInfo.h"
 #include "Enums.h"
@@ -33,6 +34,20 @@ class PugixmlFb2Parser
 
 public:
 
+    template<typename StreamType> static
+    StreamType& printTagAttrs(StreamType &s, pugi::xml_node& node)
+    {
+        for (pugi::xml_attribute attr = node.first_attribute(); attr; attr = attr.next_attribute())
+        {
+            s << "  " << attr.name() << "=" << attr.value();
+        }
+
+        return s;
+    }
+
+
+public:
+
     Para             parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs);
 
     Para             parseSubtitle       (pugi::xml_node& node);
@@ -59,6 +74,8 @@ public:
     CiteEpigraph     parseCite           (pugi::xml_node& node);
     CiteEpigraph     parseEpigraph       (pugi::xml_node& node);
     Section          parseSection        (pugi::xml_node& node);
+
+    Document         parseDocument       (pugi::xml_node& fbXmlRoot);
 
 
 // Real meat goes here

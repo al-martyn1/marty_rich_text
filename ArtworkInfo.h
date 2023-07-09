@@ -36,6 +36,12 @@ struct ArtworkInfo
 
     DateRangeInfo                 translateDate;
 
+
+    bool empty() const
+    {
+        return authors.empty() && title.empty() && genres.empty() && annotation.empty() && orgTitle.empty() && translaters.empty() && date.empty() && lang.empty() && orgLang.empty() && translateDate.empty();
+    }
+
 }; // struct ArtworkInfo
 
 

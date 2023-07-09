@@ -13,6 +13,11 @@ struct DocumentHeader
     DocumentInfo     documentInfo  ;
     PublishingInfo   publishingInfo;
 
+    bool empty() const
+    {
+        return artworkInfo.empty() && documentInfo.empty() && publishingInfo.empty();
+    }
+
 }; // struct DocumentHeader
 
 

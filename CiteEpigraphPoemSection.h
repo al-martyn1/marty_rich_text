@@ -198,6 +198,12 @@ struct Section
                                               //!< Мы позволим и то и другое, при отображении непосредственное содержимое идёт до подсекций
     std::vector<Section>        subsections ; //!< Подсекции/подразделы
 
+
+    bool empty() const
+    {
+        return id.empty() && lang.empty() && title.empty() && epigraphs.empty() && annotation.empty() && content.empty() && subsections.empty();
+    }
+
 }; // struct Section
 
 

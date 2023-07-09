@@ -13,6 +13,10 @@ struct TitleInfo
 
     std::string                   fullTitle  ; // Overrides composed from series/title/subTitle  (filltitle - прикольное слово из вертикальных палочек)
 
+    bool empty() const
+    {
+        return title.empty();
+    }
 
     std::string makeFullTitle() const
     {

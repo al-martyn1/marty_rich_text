@@ -24,6 +24,13 @@ struct DocumentInfo
 
     std::vector<Para>             history ; // Пока так, не читаем, возможно, поменяется
 
+
+    bool empty() const
+    {
+        return creators.empty() && id.empty() && version.empty() && creationDateStart.empty() && creationDate.empty() && creationSoftware.empty() && history.empty();
+    }
+
+
 }; // struct DocumentInfo
 
 
