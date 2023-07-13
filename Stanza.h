@@ -23,6 +23,11 @@ struct Stanza
 
     std::vector<Para>  lines; // FB2 v-tag
 
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        return lines;
+    }
+
 };
 
 

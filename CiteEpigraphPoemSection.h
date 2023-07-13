@@ -8,6 +8,9 @@
 #include "TextAuthor.h"
 #include "Title.h"
 
+#include "utils.h"
+
+
 namespace marty_rich_text {
 
 
@@ -102,9 +105,14 @@ struct Block
     std::vector<Para>            para        ;
     std::vector<Poem>            poem        ;
     std::vector<CiteEpigraph>    citeEpigraph;
-    std::vector<Table>           table;
+    std::vector<Table>           table       ;
+
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const;
+
 
 }; // struct Block
+
+
 
 
 // poem
@@ -128,6 +136,31 @@ struct Poem
     std::vector<Stanza>         stanzas     ;
     std::vector<TextAuthor>     textAuthors ; //!< Это Para на самом деле
     DateRangeInfo               date        ; //!< Диапазон дат, есть метод empty(), optional не нужен
+
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        std::vector<Para> paras;
+
+        appendParas(paras, title.toParas(sh, secLevel));
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, epigraphs, sh, secLevel);
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, stanzas, sh, secLevel);
+
+        //NOTE: !!!
+        // либо берем textAuthors как есть
+        // либо компонуем в один параграф через запятую
+
+        // пока как есть
+        appendParas(paras, textAuthors);
+
+        if (!date.empty())
+        {
+            //NOTE: !!!
+            // Тут надо бы со стилями что-то мутить
+            paras.emplace_back(Para::normalPara(date.getDisplayValue()));
+        }
+
+        return paras;
+    }
 
 }; // struct Poem
 
@@ -160,7 +193,30 @@ struct CiteEpigraph
     EBlockType                  blockType   ; //!< Только EBlockType::cite или EBlockType::epigraph
 
     std::vector<Block>          blocks      ;
-    std::vector<TextAuthor>     textAuthors ; //!< Это Para на самом деле
+    std::vector<TextAuthor>     textAuthors ; //!< Это std::vector<Para> на самом деле
+
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        std::vector<Para> paras;
+
+        if (blockType==EBlockType::cite || blockType==EBlockType::epigraph)
+        {
+            MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, blocks, sh, secLevel);
+        }
+        else
+        {
+            // Ничего не делаем
+        }
+
+        //NOTE: !!!
+        // либо берем textAuthors как есть
+        // либо компонуем в один параграф через запятую
+
+        // пока как есть
+        appendParas(paras, textAuthors);
+
+        return paras;
+    }
 
 }; // struct Cite
 
@@ -204,8 +260,46 @@ struct Section
         return id.empty() && lang.empty() && title.empty() && epigraphs.empty() && annotation.empty() && content.empty() && subsections.empty();
     }
 
+
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        std::vector<Para> paras;
+
+        appendParas(paras, title.toParas(sh, secLevel));
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, epigraphs, sh, secLevel);
+        // skip annotation
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, content, sh, secLevel);
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, subsections, sh, secLevel);
+
+        return paras;
+    }
+
+
 }; // struct Section
 
+
+inline
+std::vector<Para> Block::toParas(const StyleSheet &sh, std::size_t secLevel) const
+{
+    std::vector<Para> paras;
+
+    // Тут лежит макс по одному элементу, в зависимости от blockType,
+    // Но даже если blockType соответствует, то может не быть соотв содержимого
+    // Или любой blockType может содержать не по одному элементу?
+
+    switch(blockType)
+    {
+        case EBlockType::para:     MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, para        , sh, secLevel);  break;
+        case EBlockType::poem:     MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, poem        , sh, secLevel);  break;
+        case EBlockType::cite:     MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, citeEpigraph, sh, secLevel);  break;
+        case EBlockType::epigraph: MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, citeEpigraph, sh, secLevel);  break;
+        case EBlockType::table:    MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, table       , sh, secLevel);  break;
+
+        default: throw std::runtime_error("Block::blockType - unknown blockType");
+    }
+
+    return paras;
+}
 
 
 } // namespace marty_rich_text

@@ -21,6 +21,15 @@ struct Table
 
     std::vector<Tr>    rows;
 
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        std::vector<Para> paras;
+
+        MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, rows, sh, secLevel);
+
+        return paras;
+    }
+
 }; // struct Table
 
 

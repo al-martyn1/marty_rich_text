@@ -701,7 +701,11 @@ Section PugixmlFb2Parser::parseSection(pugi::xml_node& node)
 
     }
 
-    parsePugixml_AttrCheckAllProcessed(node, "epigraph", proceseedAttrs);
+    std::string nodeName = node.name();
+    if (nodeName=="section")
+    {
+        parsePugixml_AttrCheckAllProcessed(node, "section", proceseedAttrs);
+    }
 
     return sec;
 

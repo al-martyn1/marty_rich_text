@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StyleSheet.h"
 #include "TextAttributes.h"
 #include "TextFragment.h"
 #include "VariantValue.h"
@@ -42,11 +43,117 @@ struct Para
     std::string                    text ; //!< Текст параграфа
     std::vector<TextAttributes>    attrs; //!< Атрибуты параграфа
 
+
+    Para toPlainPara() const
+    {
+        if (empty())
+        {
+            return emptyLine();
+        }
+
+        Para paraRes; // = *this
+
+        if (isCode())
+        {
+            paraRes.paraType = EParaType::code;
+        }
+        else if (isTeletype())
+        {
+            paraRes.paraType = EParaType::teletype;
+        }
+        else if (isPre())
+        {
+            paraRes.paraType = EParaType::pre;
+        }
+        else
+        {
+            paraRes.paraType = paraType; // EParaType::normal;
+        }
+
+        // image        = 4 /*!< Имеется один атрибут с флагом image, сам para не содержит текста */,
+
+
+        paraRes.align = align;
+
+        paraRes.id    = id   ;
+        paraRes.style = style;
+        paraRes.lang  = lang ;
+
+        // if (attrs.size()<2)
+        // {
+        //     paraRes.attrs = attrs;
+        // }
+
+        for(const auto &attr: attrs)
+        {
+            if (attr.pos>=text.size() || (attr.pos+attr.len)>=text.size())
+            {
+                continue; // что-то пошло не так, но агриться не будет, потому что такого не должно быть, а если и есть, то пох, будет заметно в пропаданиях текста.
+            }
+
+            // Тут считаем, что ссылки на сноски не имеют внутри какого-либо форматирования и идут одним блоком
+            if ((attr.style&BasicStyleFlags::link)!=0)
+            {
+                if (attr.len>1 && text[attr.pos]=='[' && text[attr.pos+attr.len-1]==']')
+                {
+                    continue; // Это ссылка на сноску, пропускаем
+                }
+            }
+            else if ((attr.style&BasicStyleFlags::image)!=0)
+            {
+                continue; // Пропускаем картинки
+            }
+
+            paraRes.text.append(text, attr.pos, attr.len);
+        
+        }
+        
+        switch(paraRes.paraType)
+        {
+            case EParaType::code     : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::code    , BasicStyleFlags::code    , 0, paraRes.text.size() }); break;
+            case EParaType::teletype : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::teletype, BasicStyleFlags::teletype, 0, paraRes.text.size() }); break;
+            case EParaType::pre      : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::pre     , BasicStyleFlags::pre     , 0, paraRes.text.size() }); break;
+            default                  : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::blank   , BasicStyleFlags::blank   , 0, paraRes.text.size() });
+        }
+
+        return paraRes;
+    }
+
+    std::string toPlainText() const
+    {
+        return toPlainPara().text;
+    }
+
+    std::vector<Para> toPlainParas() const
+    {
+        std::vector<Para> res;
+        res.emplace_back(toPlainPara());
+        return res;
+    }
+
+    std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
+    {
+        std::vector<Para> res;
+        res.emplace_back(*this);
+        return res;
+    }
+
     static
     Para emptyLine()
     {
         Para p;
         p.paraType = EParaType::emptyLine;
+        //paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::blank   , BasicStyleFlags::blank   , 0, 0 });
+        return p;
+    }
+
+    static
+    Para normalPara(const std::string &t)
+    {
+        Para p;
+        p.paraType = EParaType::normal;
+        p.text     = t;
+        p.attrs.emplace_back(TextAttributes{BasicStyleFlags::blank   , BasicStyleFlags::blank   , 0, p.text.size() });
         return p;
     }
 
@@ -213,6 +320,35 @@ struct Para
 
 
 }; // struct Para
+
+
+inline
+void appendParas(std::vector<Para> &appendTo, const std::vector<Para> &parasToAppend)
+{
+    appendTo.insert(appendTo.end(), parasToAppend.begin(), parasToAppend.end());
+}
+
+
+inline
+std::string toPlainText(const Para &p)
+{
+    return p.toPlainText();
+}
+
+inline
+std::vector<std::string> toPlainText(const std::vector<Para> &pv)
+{
+    std::vector<std::string> textVec;
+
+    for(const auto &p : pv)
+    {
+        textVec.emplace_back(p.toPlainText());
+    }
+
+    return textVec;
+}
+
+
 
 
 } // namespace marty_rich_text

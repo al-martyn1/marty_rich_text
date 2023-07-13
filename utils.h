@@ -3,6 +3,18 @@
 #include <string>
 
 
+#define MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(parasVec, valueTypeVec, sh, secLevel) \
+                    do                                                      \
+                    {                                                       \
+                        for(const auto &v : valueTypeVec)                   \
+                        {                                                   \
+                            appendParas(parasVec, v.toParas(sh, secLevel)); \
+                        }                                                   \
+                    } while(0)
+
+
+
+
 namespace marty_rich_text {
 
 
