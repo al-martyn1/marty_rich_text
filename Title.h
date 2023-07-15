@@ -20,7 +20,19 @@ struct Title
 
     std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
     {
-        return paras;
+        auto res = paras;
+
+        for(auto &p : res)
+        {
+            p.paraType = EParaType::title;
+        }
+
+        if (!res.empty())
+        {
+            res.emplace_back(Para::emptyLine());
+        }
+        
+        return res;
     }
 
 }; // struct Title

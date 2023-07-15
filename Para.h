@@ -86,7 +86,11 @@ struct Para
 
         for(const auto &attr: attrs)
         {
-            if (attr.pos>=text.size() || (attr.pos+attr.len)>=text.size())
+            auto textSize = text.size();
+            auto attrPosB = attr.pos;
+            auto attrPosE = attr.pos + attr.len;
+
+            if (attrPosB>=textSize || attrPosE>textSize)
             {
                 continue; // что-то пошло не так, но агриться не будет, потому что такого не должно быть, а если и есть, то пох, будет заметно в пропаданиях текста.
             }
@@ -94,7 +98,7 @@ struct Para
             // Тут считаем, что ссылки на сноски не имеют внутри какого-либо форматирования и идут одним блоком
             if ((attr.style&BasicStyleFlags::link)!=0)
             {
-                if (attr.len>1 && text[attr.pos]=='[' && text[attr.pos+attr.len-1]==']')
+                if (attr.len>1 && text[attrPosB]=='[' && text[attrPosE-1]==']')
                 {
                     continue; // Это ссылка на сноску, пропускаем
                 }
@@ -159,6 +163,9 @@ struct Para
 
     bool empty() const
     {
+        if (paraType==EParaType::emptyLine)
+            return true;
+
         if (text.empty() && attrs.empty())
             return true;
 
@@ -348,6 +355,98 @@ std::vector<std::string> toPlainText(const std::vector<Para> &pv)
     return textVec;
 }
 
+
+//! Раздвигаем список параграфов, добавлем по необходимости пустые
+inline
+std::vector<Para> expandParas(const std::vector<Para> &paras)
+{
+    std::vector<Para> resParas;
+
+    for(const auto &p: paras)
+    {
+        resParas.emplace_back(p);
+
+        if (p.paraType==EParaType::subtitle)
+        {
+            resParas.emplace_back(Para::emptyLine());
+        }
+    }
+
+    return resParas;
+}
+
+inline
+std::vector<Para> compressEmptyParas(const std::vector<Para> &paras)
+{
+    std::vector<Para> resParas;
+
+    for(const auto &p: paras)
+    {
+        if (p.empty() && !resParas.empty() && resParas.back().empty())
+        {
+            continue;
+        }
+
+        resParas.emplace_back(p);
+    }
+
+    return resParas;
+}
+
+inline
+std::vector<Para> expandCompressParas(const std::vector<Para> &paras)
+{
+    return compressEmptyParas(expandParas(paras));
+}
+
+
+/*
+    Параграфы типа EParaType::pre, EParaType::code и EParaType::teletype
+    это на самом деле отдельные строки кода, после них не нужно делать отбивку
+    отдельной строкой.
+
+    В противном случае, после каждого параграфа надо добавлять пустой параграф
+
+    В итоге - добавляем пустой параграф после каждого параграфа всегда, кроме:
+      empty()
+      pre
+      code
+      teletype
+      title
+      subtitle
+
+*/
+//! Текстифицирование - преобразование в простой текст
+inline
+std::vector<Para> textifyParas(const std::vector<Para> &paras)
+{
+    std::vector<Para> resParas;
+
+    for(const auto &p : paras)
+    {
+        resParas.emplace_back(p);
+
+        if (p.empty())
+        {
+            continue;
+        }
+
+        switch(p.paraType)
+        {
+            case EParaType::code     : break;
+            case EParaType::teletype : break;
+            case EParaType::pre      : break;
+            case EParaType::title    : break;
+            case EParaType::subtitle : break;
+            case EParaType::stanzaV  : break;
+            //case EParaType::: break;
+            default:
+                resParas.emplace_back(Para::emptyLine());
+        }
+    }
+
+    return compressEmptyParas(resParas); // compress - на всякий случай
+}
 
 
 

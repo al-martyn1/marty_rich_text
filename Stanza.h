@@ -25,7 +25,10 @@ struct Stanza
 
     std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
     {
-        return lines;
+        std::vector<Para> resParas = title.toParas(sh, secLevel);
+        resParas.emplace_back(subtitle);
+        appendParas(resParas, lines);
+        return resParas;
     }
 
 };
