@@ -114,10 +114,18 @@ struct Para
         
         switch(paraRes.paraType)
         {
-            case EParaType::code     : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::code    , BasicStyleFlags::code    , 0, paraRes.text.size() }); break;
-            case EParaType::teletype : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::teletype, BasicStyleFlags::teletype, 0, paraRes.text.size() }); break;
-            case EParaType::pre      : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::pre     , BasicStyleFlags::pre     , 0, paraRes.text.size() }); break;
-            default                  : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::blank   , BasicStyleFlags::blank   , 0, paraRes.text.size() });
+            case EParaType::code      : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::code    , BasicStyleFlags::code    , 0, paraRes.text.size() }); break;
+            case EParaType::teletype  : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::teletype, BasicStyleFlags::teletype, 0, paraRes.text.size() }); break;
+            case EParaType::pre       : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::pre     , BasicStyleFlags::pre     , 0, paraRes.text.size() }); break;
+            case EParaType::unknown   : [[fallthrough]];
+            case EParaType::normal    : [[fallthrough]];
+            case EParaType::image     : [[fallthrough]];
+            case EParaType::emptyLine : [[fallthrough]];
+            case EParaType::title     : [[fallthrough]];
+            case EParaType::subtitle  : [[fallthrough]];
+            case EParaType::textAuthor: [[fallthrough]];
+            case EParaType::stanzaV   : [[fallthrough]];
+            default                   : paraRes.attrs.emplace_back(TextAttributes{BasicStyleFlags::blank   , BasicStyleFlags::blank   , 0, paraRes.text.size() });
         }
 
         return paraRes;
@@ -137,6 +145,8 @@ struct Para
 
     std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
     {
+        MARTY_ARG_USED(secLevel);
+        MARTY_ARG_USED(sh);
         std::vector<Para> res;
         res.emplace_back(*this);
         return res;
@@ -270,7 +280,18 @@ struct Para
             TextAttributes attr; // style is blank by default
             attr.pos = lastAttrEnd;
             attr.len = text.size()-lastAttrEnd;
+
+            #if defined(_MSC_VER)
+                #pragma warning(push)
+                #pragma warning(disable:5045) // warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+            #endif
+
             attrs.emplace_back(attr);
+
+            #if defined(_MSC_VER)
+                #pragma warning(pop)
+            #endif
+
         }
 
     }
@@ -409,11 +430,12 @@ std::vector<Para> expandCompressParas(const std::vector<Para> &paras)
 
     В итоге - добавляем пустой параграф после каждого параграфа всегда, кроме:
       empty()
-      pre
       code
       teletype
+      pre
       title
       subtitle
+      stanzaV
 
 */
 //! Текстифицирование - преобразование в простой текст
@@ -433,13 +455,20 @@ std::vector<Para> textifyParas(const std::vector<Para> &paras)
 
         switch(p.paraType)
         {
-            case EParaType::code     : break;
-            case EParaType::teletype : break;
-            case EParaType::pre      : break;
-            case EParaType::title    : break;
-            case EParaType::subtitle : break;
-            case EParaType::stanzaV  : break;
-            //case EParaType::: break;
+            case EParaType::emptyLine : break;
+            case EParaType::code      : break;
+            case EParaType::teletype  : break;
+            case EParaType::pre       : break;
+            case EParaType::title     : break;
+            case EParaType::subtitle  : break;
+            case EParaType::stanzaV   : break;
+
+            case EParaType::invalid   : break;
+
+            case EParaType::image     : [[fallthrough]];
+            case EParaType::normal    : [[fallthrough]];
+            case EParaType::textAuthor: [[fallthrough]];
+            
             default:
                 resParas.emplace_back(Para::emptyLine());
         }

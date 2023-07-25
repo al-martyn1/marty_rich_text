@@ -8,7 +8,7 @@ namespace marty_rich_text {
 
 
 inline
-Document PugixmlFb2Parser::parseDocument(pugi::xml_node& fbXmlRoot)
+Document PugixmlFb2Parser::parseDocument(pugi::xml_node fbXmlRoot)
 {
     pugi::xml_node fbNode = fbXmlRoot.child("FictionBook");
     if (!fbNode)

@@ -3,6 +3,17 @@
 #include <string>
 
 
+
+//----------------------------------------------------------------------------
+#ifndef MARTY_ARG_USED
+
+    //! Подавление варнинга о неиспользованном аргументе
+    #define MARTY_ARG_USED(x)                   (void)(x)
+
+#endif
+
+//----------------------------------------------------------------------------
+
 #define MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(parasVec, valueTypeVec, sh, secLevel) \
                     do                                                      \
                     {                                                       \
@@ -24,11 +35,11 @@ static bool    isUpper( char ch )     { return (ch>='A' && ch<='Z'); }
 static bool    isLower( wchar_t ch )  { return (ch>=L'a' && ch<=L'z'); }
 static bool    isUpper( wchar_t ch )  { return (ch>=L'A' && ch<=L'Z'); }
 
-static char    toLower( char ch )     { return isUpper(ch) ? ch-'A'+'a' : ch; }
-static char    toUpper( char ch )     { return isLower(ch) ? ch-'a'+'A' : ch; }
+static char    toLower( char ch )     { return (char)(isUpper(ch) ? ch-'A'+'a' : ch); }
+static char    toUpper( char ch )     { return (char)(isLower(ch) ? ch-'a'+'A' : ch); }
 
-static wchar_t toLower( wchar_t ch )  { return isUpper(ch) ? ch-L'A'+L'a' : ch; }
-static wchar_t toUpper( wchar_t ch )  { return isLower(ch) ? ch-L'a'+L'A' : ch; }
+static wchar_t toLower( wchar_t ch )  { return (wchar_t)(isUpper(ch) ? ch-L'A'+L'a' : ch); }
+static wchar_t toUpper( wchar_t ch )  { return (wchar_t)(isLower(ch) ? ch-L'a'+L'A' : ch); }
 
 template< class CharT, class Traits = std::char_traits<CharT>, class Allocator = std::allocator<CharT> >
 static std::basic_string< CharT, Traits, Allocator >

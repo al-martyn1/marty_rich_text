@@ -136,7 +136,7 @@ protected:
     }
 
     static
-    bool skipNodeProcessing(pugi::xml_node& node)
+    bool skipNodeProcessing(pugi::xml_node node)
     {
         return skipNodeProcessing(node.type());
     }

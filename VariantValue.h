@@ -38,10 +38,11 @@ public:
             case EVariantValueType::typeString  :  return valueString   == other.valueString  ;
             case EVariantValueType::typeInt     :  return valueInt      == other.valueInt     ;
             case EVariantValueType::typeUnsigned:  return valueUnsigned == other.valueUnsigned;
+            case EVariantValueType::invalid     : [[fallthrough]];
             default: throw std::runtime_error("VariantValue::operator== - unknown variant type");
         }
 
-        return false;
+        // return false;
     }
 
 
@@ -129,6 +130,7 @@ public:
             case EVariantValueType::typeString  : return valueString;
             case EVariantValueType::typeInt     : return std::to_string(valueInt     );
             case EVariantValueType::typeUnsigned: return std::to_string(valueUnsigned);
+            case EVariantValueType::invalid     : [[fallthrough]];
             default: throw std::runtime_error("VariantValue::asString - unknown variant type");
         }
 
@@ -153,6 +155,7 @@ public:
 
             case EVariantValueType::typeInt     :  return               valueInt     ;
             case EVariantValueType::typeUnsigned:  return (std::int64_t)valueUnsigned;
+            case EVariantValueType::invalid     : [[fallthrough]];
             default: throw std::runtime_error("VariantValue::asInt - unknown variant type");
         }
 
@@ -176,6 +179,7 @@ public:
                     }
             case EVariantValueType::typeInt     : return (std::uint64_t)valueInt     ;
             case EVariantValueType::typeUnsigned: return                valueUnsigned;
+            case EVariantValueType::invalid     : [[fallthrough]];
             default: throw std::runtime_error("VariantValue::asUnsigned - unknown variant type");
         }
 

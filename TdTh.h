@@ -45,6 +45,8 @@ struct TdTh
 
     std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
     {
+        MARTY_ARG_USED(sh);
+        MARTY_ARG_USED(secLevel);
         return paras;
     }
 

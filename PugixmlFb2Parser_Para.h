@@ -5,6 +5,7 @@
 #include "PugixmlGenericRichParaWalker.h"
 #include "parsePugixml_AttrsIdLangStyle.h"
 #include "utils.h"
+#include "PugixmlFb2Parser.h"
 
 #include "marty_pugixml/marty_pugixml.h"
 
@@ -76,14 +77,17 @@ struct Fb2ParaWalker : public PugixmlGenericRichParaWalker // marty_pugixml::tre
 
 
 inline
-Para PugixmlFb2Parser::parsePara(pugi::xml_node& node, std::unordered_set<std::string> *pProceseedAttrs)
+Para PugixmlFb2Parser::parsePara(pugi::xml_node node, std::unordered_set<std::string> *pProceseedAttrs)
 {
     Fb2ParaWalker walker;
     marty_pugixml::traverse_node(node, walker);
     walker.para.mergeEqualAttrs();
     walker.para.fixAttrs();
 
-    parsePugixml_AttrsIdLangStyle(walker.para, node, pProceseedAttrs);
+    if (pProceseedAttrs)
+    {
+        parsePugixml_AttrsIdLangStyle(walker.para, node, pProceseedAttrs);
+    }
 
     return walker.para;
 }

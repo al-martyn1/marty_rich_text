@@ -295,6 +295,11 @@ std::vector<Para> Block::toParas(const StyleSheet &sh, std::size_t secLevel) con
         case EBlockType::epigraph: MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, citeEpigraph, sh, secLevel);  break;
         case EBlockType::table:    MARTY_RICH_TEXT_UTILS_H_RICH_ELEMENT_VECTOR_TO_PARAS(paras, table       , sh, secLevel);  break;
 
+        case EBlockType::invalid : [[fallthrough]];
+        case EBlockType::code    : [[fallthrough]];
+        case EBlockType::teletype: [[fallthrough]];
+        case EBlockType::pre     : [[fallthrough]];
+
         default: throw std::runtime_error("Block::blockType - unknown blockType");
     }
 

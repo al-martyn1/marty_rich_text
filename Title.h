@@ -20,6 +20,9 @@ struct Title
 
     std::vector<Para> toParas(const StyleSheet &sh, std::size_t secLevel=0) const
     {
+        MARTY_ARG_USED(sh);
+        MARTY_ARG_USED(secLevel);
+
         auto res = paras;
 
         for(auto &p : res)

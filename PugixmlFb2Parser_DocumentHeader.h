@@ -16,7 +16,7 @@ namespace marty_rich_text {
 
 //----------------------------------------------------------------------------
 inline
-AuthorInfo PugixmlFb2Parser::parseAuthorInfo(pugi::xml_node& node)
+AuthorInfo PugixmlFb2Parser::parseAuthorInfo(pugi::xml_node node)
 {
     AuthorInfo ai;
 
@@ -37,14 +37,14 @@ AuthorInfo PugixmlFb2Parser::parseAuthorInfo(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-TranslaterInfo PugixmlFb2Parser::parseTranslaterInfo(pugi::xml_node& node)
+TranslaterInfo PugixmlFb2Parser::parseTranslaterInfo(pugi::xml_node node)
 {
     return PugixmlFb2Parser::parseAuthorInfo(node);
 }
 
 //----------------------------------------------------------------------------
 inline
-DateInfo PugixmlFb2Parser::parseDateInfo(pugi::xml_node& node)
+DateInfo PugixmlFb2Parser::parseDateInfo(pugi::xml_node node)
 {
     DateInfo di;
 
@@ -56,7 +56,7 @@ DateInfo PugixmlFb2Parser::parseDateInfo(pugi::xml_node& node)
 
 //----------------------------------------------------------------------------
 inline
-DateRangeInfo PugixmlFb2Parser::parseDateRangeInfo(pugi::xml_node& node)
+DateRangeInfo PugixmlFb2Parser::parseDateRangeInfo(pugi::xml_node node)
 {
     DateInfo di = PugixmlFb2Parser::parseDateInfo(node);
     DateRangeInfo dri;
@@ -67,7 +67,7 @@ DateRangeInfo PugixmlFb2Parser::parseDateRangeInfo(pugi::xml_node& node)
 //----------------------------------------------------------------------------
 //! ArtworkInfo извлекается из тэга FictionBook/description/title-info. Тут на входе мы ожидаем description узел, так как наши представления об иерархии данных отличаются от дизайнеров FB2.
 inline
-ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node& fb2DescriptionNode)
+ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node fb2DescriptionNode)
 {
     ArtworkInfo ai;
 
@@ -140,8 +140,10 @@ ArtworkInfo PugixmlFb2Parser::parseArtworkInfo(pugi::xml_node& fb2DescriptionNod
 //----------------------------------------------------------------------------
 //! DocumentInfo извлекается из тэга FictionBook/description/document-info. Тут на входе мы ожидаем description узел, так как наши представления об иерархии данных отличаются от дизайнеров FB2.
 inline
-DocumentInfo PugixmlFb2Parser::parseDocumentInfo(pugi::xml_node& fb2DescriptionNode)
+DocumentInfo PugixmlFb2Parser::parseDocumentInfo(pugi::xml_node fb2DescriptionNode)
 {
+    MARTY_ARG_USED(fb2DescriptionNode);
+
     DocumentInfo di;
 
     //TODO: !!!
@@ -191,7 +193,7 @@ DocumentInfo PugixmlFb2Parser::parseDocumentInfo(pugi::xml_node& fb2DescriptionN
 
 //----------------------------------------------------------------------------
 inline
-PublishingInfo PugixmlFb2Parser::parsePublishingInfo(pugi::xml_node& fb2DescriptionNode)
+PublishingInfo PugixmlFb2Parser::parsePublishingInfo(pugi::xml_node fb2DescriptionNode)
 {
     PublishingInfo pi;
 
@@ -211,7 +213,7 @@ PublishingInfo PugixmlFb2Parser::parsePublishingInfo(pugi::xml_node& fb2Descript
 
 //----------------------------------------------------------------------------
 inline
-DocumentHeader PugixmlFb2Parser::parseDocumentHeader(pugi::xml_node& fb2DescriptionNode)
+DocumentHeader PugixmlFb2Parser::parseDocumentHeader(pugi::xml_node fb2DescriptionNode)
 {
     DocumentHeader dh;
 
